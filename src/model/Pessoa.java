@@ -69,11 +69,17 @@ public class Pessoa implements Serializable {
     }
 
     public void adicionarReceita(Receita receita) {
+        if(receita == null) {
+            throw new IllegalArgumentException("Receita não pode ser nula");
+        }
         receitas.add(receita);
         conta.addHistoricoDeLancamentos(receita);
     }
 
     public void adicionarDespesa(Despesa despesa) {
+        if(despesa == null) {
+            throw new IllegalArgumentException("Despesa não pode ser nula");
+        }
         this.despesa.add(despesa);
         conta.addHistoricoDeLancamentos(despesa);
     }

@@ -32,9 +32,9 @@ public class ContaBancaria implements Serializable {
     private final Map<Lancamento, List<BigInteger>> historicoLancamentos = new HashMap<>();
 
     public ContaBancaria(String numero, BigInteger saldo, Pessoa titular) {
-        this.numero = numero;
-        this.saldo = saldo;
-        this.titular = titular;
+        setNumero(numero);
+        setSaldo(saldo);
+        setTitular(titular);
     }
 
     public String getNumero() {
@@ -42,6 +42,9 @@ public class ContaBancaria implements Serializable {
     }
 
     public void setNumero(String numero) {
+        if(numero == null || numero.isBlank()) {
+            throw new IllegalArgumentException("Número da conta não pode ser nulo ou vazio");
+        }
         this.numero = numero;
     }
 
@@ -50,6 +53,9 @@ public class ContaBancaria implements Serializable {
     }
 
     private void setSaldo(BigInteger saldo) {
+        if(saldo == null || saldo.compareTo(BigInteger.ZERO) < 0) {
+            throw new IllegalArgumentException("Saldo não pode ser nulo ou negativo");
+        }
         this.saldo = saldo;
     }
 
@@ -58,14 +64,23 @@ public class ContaBancaria implements Serializable {
     }
 
     public void setTitular(Pessoa titular) {
+        if(titular == null) {
+            throw new IllegalArgumentException("Titular da conta não pode ser nulo");
+        }
         this.titular = titular;
     }
 
     public BigInteger somaSaldo(BigInteger valor) {
+        if(valor == null || valor.compareTo(BigInteger.ZERO) < 0) {
+            throw new IllegalArgumentException("Valor não pode ser nulo ou negativo");
+        }
         return this.saldo = this.saldo.add(valor);
     }
 
     public BigInteger subtraiSaldo(BigInteger valor) {
+        if(valor == null || valor.compareTo(BigInteger.ZERO) < 0) {
+            throw new IllegalArgumentException("Valor não pode ser nulo ou negativo");
+        }
         return this.saldo = this.saldo.subtract(valor);
     }
 
