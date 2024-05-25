@@ -19,7 +19,7 @@ public class Despesa extends Lancamento {
 
     public Despesa(BigInteger valor, LocalDate dataLancamento, TipoDespesa tipoDespesa) {
         super(valor, dataLancamento);
-        this.tipoDespesa = tipoDespesa;
+        setTipoDespesa(tipoDespesa);
     }
 
     public TipoDespesa getTipoDespesa() {
@@ -27,6 +27,9 @@ public class Despesa extends Lancamento {
     }
 
     public void setTipoDespesa(TipoDespesa tipoDespesa) {
+        if(tipoDespesa == null) {
+            throw new IllegalArgumentException("Tipo de despesa não pode ser nulo");
+        }
         this.tipoDespesa = tipoDespesa;
     }
 }

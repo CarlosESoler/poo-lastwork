@@ -21,15 +21,23 @@ public class Pessoa implements Serializable {
     @Serial
     private static final long serialVersionUID = 2L;
     private String nome;
-    private List<Receita> receitas;
-    private List<Despesa> despesa;
+    private List<Receita> receitas = new ArrayList<>();
+    private List<Despesa> despesa = new ArrayList<>();
     private ContaBancaria conta;
+
+    public Pessoa(String nome, ContaBancaria conta) {
+        setNome(nome);
+        setConta(conta);
+    }
 
     public String getNome() {
         return nome;
     }
 
     public void setNome(String nome) {
+        if(nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("Nome não pode ser nulo ou vazio");
+        }
         this.nome = nome;
     }
 
@@ -54,6 +62,9 @@ public class Pessoa implements Serializable {
     }
 
     public void setConta(ContaBancaria conta) {
+        if(conta == null) {
+            throw new IllegalArgumentException("Conta não pode ser nula");
+        }
         this.conta = conta;
     }
 

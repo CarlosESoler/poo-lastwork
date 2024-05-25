@@ -5,7 +5,6 @@ import java.io.*;
 public class Serializacao {
     
     File file;
-    ObjectInputStream ois;
 
     public Serializacao() {
         try {

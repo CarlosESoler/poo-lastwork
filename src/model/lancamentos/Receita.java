@@ -19,7 +19,7 @@ public class Receita extends Lancamento {
 
     public Receita(BigInteger valor, LocalDate dataLancamento, TipoReceita tipoReceita) {
         super(valor, dataLancamento);
-        this.tipoReceita = tipoReceita;
+        setTipoReceita(tipoReceita);
     }
 
     public TipoReceita getTipoReceita() {
@@ -27,6 +27,9 @@ public class Receita extends Lancamento {
     }
 
     public void setTipoReceita(TipoReceita tipoReceita) {
+        if(tipoReceita == null) {
+            throw new IllegalArgumentException("Tipo de receita não pode ser nulo");
+        }
         this.tipoReceita = tipoReceita;
     }
 }

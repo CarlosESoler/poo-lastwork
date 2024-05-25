@@ -17,11 +17,14 @@ public class Lancamento {
     private LocalDate dataLancamento;
 
     public Lancamento(BigInteger valor, LocalDate dataLancamento) {
-        this.valor = valor;
-        this.dataLancamento = dataLancamento;
+       setValor(valor);
+       setDataLancamento(dataLancamento);
     }
 
     public LocalDate getDataLancamento() {
+        if(dataLancamento == null) {
+            throw new IllegalArgumentException("Data de lançamento não pode ser nula");
+        }
         return dataLancamento;
     }
 
@@ -34,6 +37,9 @@ public class Lancamento {
     }
 
     public void setValor(BigInteger valor) {
+        if(valor == null || valor.compareTo(BigInteger.ZERO) < 0) {
+            throw new IllegalArgumentException("Valor não pode ser nulo");
+        }
         this.valor = valor;
     }
 }
