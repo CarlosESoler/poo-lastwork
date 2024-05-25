@@ -85,6 +85,8 @@ public class ContaBancaria implements Serializable {
     }
 
     public void addHistoricoDeLancamentos(Lancamento lancamento) {
+
+        // TODO - Refactor this code
         if(lancamento instanceof Despesa) {
             this.historicoLancamentos.put(lancamento, Arrays.asList(getSaldo(), this.subtraiSaldo(lancamento.getValor())));
             return;
