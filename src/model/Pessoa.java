@@ -25,11 +25,6 @@ public class Pessoa implements Serializable {
     private List<Despesa> despesa = new ArrayList<>();
     private ContaBancaria conta;
 
-    public Pessoa(String nome, ContaBancaria conta) {
-        setNome(nome);
-        setConta(conta);
-    }
-
     public String getNome() {
         return nome;
     }
