@@ -5,10 +5,10 @@
  */
 package model.lancamentos;
 
+import java.math.BigDecimal;
 import model.interfaces.TipoReceita;
-
-import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.Date;
 
 /**
  *
@@ -16,9 +16,15 @@ import java.time.LocalDate;
  */
 public class Receita extends Lancamento {
     TipoReceita tipoReceita;
-
-    public Receita(BigInteger valor, LocalDate dataLancamento, TipoReceita tipoReceita) {
-        super(valor, dataLancamento);
+    
+    /**
+     * Construtor define os valores iniciais da receita a ser inserida
+     * @param valor
+     * @param dataLancamento
+     * @param tipoReceita 
+     */
+    public Receita(LocalDate dataLancamento, TipoReceita tipoReceita, String valor) {
+        super(dataLancamento, valor);
         setTipoReceita(tipoReceita);
     }
 
@@ -27,8 +33,8 @@ public class Receita extends Lancamento {
     }
 
     public void setTipoReceita(TipoReceita tipoReceita) {
-        if(tipoReceita == null) {
-            throw new IllegalArgumentException("Tipo de receita não pode ser nulo");
+        if (tipoReceita == null) {
+            throw new NullPointerException("O tipo de receita não pode ser nulo.");
         }
         this.tipoReceita = tipoReceita;
     }

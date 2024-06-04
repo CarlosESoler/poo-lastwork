@@ -5,10 +5,12 @@
  */
 package model.lancamentos;
 
+import java.math.BigDecimal;
 import model.interfaces.TipoDespesa;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+
 
 /**
  *
@@ -17,8 +19,8 @@ import java.time.LocalDate;
 public class Despesa extends Lancamento {
     TipoDespesa tipoDespesa;
 
-    public Despesa(BigInteger valor, LocalDate dataLancamento, TipoDespesa tipoDespesa) {
-        super(valor, dataLancamento);
+    public Despesa(LocalDate dataLancamento, TipoDespesa tipoDespesa, String valor) {
+        super(dataLancamento, valor);
         setTipoDespesa(tipoDespesa);
     }
 
