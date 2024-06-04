@@ -9,18 +9,15 @@ import model.lancamentos.Despesa;
 import model.lancamentos.Lancamento;
 import model.lancamentos.Receita;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
-import model.interfaces.TipoDespesa;
 
 /**
  *
  * @author csoler
  */
 public class Pessoa implements Serializable {
-    @Serial
     private static final long serialVersionUID = 2L;
     private String nome;
     private List<Receita> receitas = new ArrayList<>();
@@ -43,16 +40,10 @@ public class Pessoa implements Serializable {
     }
 
     public List<Receita> retornarReceitas() {
-//        if (receitas.isEmpty()) {
-//            throw new IllegalArgumentException("Nenhuma receita inserida!");
-//        }
         return receitas;
     }
 
     public List<Despesa> retornarDespesas() {
-//        if(despesas.isEmpty()){
-//            throw new IllegalArgumentException("Nenhuma despesa inserida;");
-//        }
         return despesas;
     }
 
