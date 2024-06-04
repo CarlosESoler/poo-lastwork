@@ -7,21 +7,30 @@ package view;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.time.LocalTime;
+import javax.swing.JOptionPane;
+import model.ContaBancaria;
+import model.Pessoa;
 
 /**
  *
  * @author Gamer
  */
 public class PessoaGUI extends javax.swing.JFrame {
-
-    private String nome;
-    
-    public PessoaGUI(String nome) {
+    Pessoa pessoa;
+    ContaBancaria conta;
+    public PessoaGUI(String nome, String numeroConta) {
         initComponents();
-        this.nome = nome;
-        saudacao();
+        setLocationRelativeTo(null);
+        pessoa = new Pessoa(nome);
+        conta = new ContaBancaria(numeroConta);
+        inicializarContexto();
     }
     
+    public void inicializarContexto(){
+        pessoa.setConta(conta);
+        conta.setTitular(pessoa);
+        saudacao();
+    }
     public void saudacao(){
         
         Toolkit kit = Toolkit.getDefaultToolkit();  
@@ -45,9 +54,31 @@ public class PessoaGUI extends javax.swing.JFrame {
         } else if (horaAtual.isAfter(horaInicioNoite) && horaAtual.isBefore(horaInicioDia)){
             lbSaudacao.setText("Boa noite,");
         }
-        
-        lbNomeUsuario.setText(nome);
-    }
+        alterarTextos();
+//        lbNomeUsuario.setText(pessoa.getNome());
+//        lbNumeroContaBancaria.setText(conta.getNumero());
+//        lbSaldoContaBancariaAtual.setText(conta.getSaldo().toString());
+//        lbValorSaldoGeral.setText(conta.consultaSaldoIndependentePeriodo().toString());
+//        lbValorDepesasAtuais.setText(conta.consultarValorDespesasAtual().toString());
+//        lbValorReceitasAtuais.setText(conta.consultarValorReceitasAtual().toString());
+//        lbValorDepesasFuturas.setText(conta.consultarValorDespesasFuturo().toString());
+//        lbValorReceitasFuturas.setText(conta.consultarValorReceitasFuturo().toString());
+//        lbDespesaMensal.setText(conta.consultarValorDespesasMensal().toString());
+//        lbReceitaMensal.setText(conta.consultarValorReceitasMensal().toString());
+   }
+    
+   public void alterarTextos(){
+        lbNomeUsuario.setText(pessoa.getNome());
+        lbNumeroContaBancaria.setText(conta.getNumero());
+        lbSaldoContaBancariaAtual.setText(conta.consultaSaldoAtual().toString());
+        lbValorSaldoGeral.setText(conta.consultaSaldoIndependentePeriodo().toString());
+        lbValorDepesasAtuais.setText(conta.consultarValorDespesasAtual().toString());
+        lbValorReceitasAtuais.setText(conta.consultarValorReceitasAtual().toString());
+        lbValorDepesasFuturas.setText(conta.consultarValorDespesasFuturo().toString());
+        lbValorReceitasFuturas.setText(conta.consultarValorReceitasFuturo().toString());
+        lbDespesaMensal.setText(conta.consultarValorDespesasMensal().toString());
+        lbReceitaMensal.setText(conta.consultarValorReceitasMensal().toString());
+   }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -64,47 +95,54 @@ public class PessoaGUI extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         btAdicionarReceita = new javax.swing.JButton();
         btRemoverReceita = new javax.swing.JButton();
+        btAdicionarDespesa = new javax.swing.JButton();
+        btRemoverReceita1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        lbReceitaMensal = new javax.swing.JLabel();
-        lbDespesaMensal = new javax.swing.JLabel();
-        lbValorReceitaMensal = new javax.swing.JLabel();
-        lbValorDespesaMensal = new javax.swing.JLabel();
+        ttlReceitaMensal = new javax.swing.JLabel();
+        ttlDespesaMensal = new javax.swing.JLabel();
         btVisualizarRelatorioMensal = new javax.swing.JButton();
         btGerarRelatorioMensal = new javax.swing.JButton();
         btGravarRelatorioMensal = new javax.swing.JButton();
+        lbValorReceitaMensal2 = new javax.swing.JLabel();
+        lbReceitaMensal = new javax.swing.JLabel();
+        lbValorReceitaMensal3 = new javax.swing.JLabel();
+        lbDespesaMensal = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         lbReceitaMensal1 = new javax.swing.JLabel();
         lbValorReceitaMensal1 = new javax.swing.JLabel();
         btGerenciarConta = new javax.swing.JButton();
         lbReceitaMensal2 = new javax.swing.JLabel();
-        lbValorReceitaMensal2 = new javax.swing.JLabel();
+        lbNumeroContaBancaria = new javax.swing.JLabel();
+        lbSaldoContaBancariaAtual = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         lbReceitaMensal4 = new javax.swing.JLabel();
-        lbReceitaMensal10 = new javax.swing.JLabel();
         btGerarDemReceitaAtual = new javax.swing.JButton();
+        lbReceitaMensal15 = new javax.swing.JLabel();
+        lbValorReceitasAtuais = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         lbReceitaMensal3 = new javax.swing.JLabel();
-        lbReceitaMensal12 = new javax.swing.JLabel();
         btGerarDemDespesaAtual = new javax.swing.JButton();
+        lbValorDepesasAtuais = new javax.swing.JLabel();
+        lbReceitaMensal18 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
-        lbReceitaMensal5 = new javax.swing.JLabel();
-        lbValorReceitaMensal3 = new javax.swing.JLabel();
         lbReceitaMensal6 = new javax.swing.JLabel();
-        lbValorReceitaMensal4 = new javax.swing.JLabel();
+        lbReceitaMensal14 = new javax.swing.JLabel();
+        lbValorSaldoGeral = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         lbReceitaMensal7 = new javax.swing.JLabel();
-        lbReceitaMensal11 = new javax.swing.JLabel();
         btGerarDemReceitaFutura = new javax.swing.JButton();
+        lbValorReceitasFuturas = new javax.swing.JLabel();
+        lbReceitaMensal16 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         lbReceitaMensal8 = new javax.swing.JLabel();
-        lbReceitaMensal13 = new javax.swing.JLabel();
         btGerarDemDespesaFutura = new javax.swing.JButton();
+        lbValorDepesasFuturas = new javax.swing.JLabel();
+        lbReceitaMensal17 = new javax.swing.JLabel();
         jPanel10 = new javax.swing.JPanel();
         btVisualizarRelatorioGeral = new javax.swing.JButton();
         btCarregarRelatorioGeral = new javax.swing.JButton();
         btGerarRelatoriaGeral = new javax.swing.JButton();
         lbReceitaMensal9 = new javax.swing.JLabel();
-        lbValorReceitaMensal5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -134,7 +172,7 @@ public class PessoaGUI extends javax.swing.JFrame {
                 .addComponent(lbSaudacao)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbNomeUsuario)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -153,46 +191,65 @@ public class PessoaGUI extends javax.swing.JFrame {
             }
         });
 
+        btAdicionarDespesa.setText("Adicionar Despesa");
+        btAdicionarDespesa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btAdicionarDespesaActionPerformed(evt);
+            }
+        });
+
+        btRemoverReceita1.setText("Remover Despesa");
+        btRemoverReceita1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btRemoverReceita1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(5, 5, 5)
-                    .addComponent(btAdicionarReceita, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(btRemoverReceita, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(19, Short.MAX_VALUE)))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(11, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(btAdicionarDespesa, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                        .addComponent(btRemoverReceita1, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(btAdicionarReceita, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btRemoverReceita, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(23, 23, 23)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btAdicionarReceita)
-                        .addComponent(btRemoverReceita))
-                    .addContainerGap(32, Short.MAX_VALUE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btAdicionarReceita)
+                    .addComponent(btRemoverReceita))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btAdicionarDespesa)
+                    .addComponent(btRemoverReceita1))
+                .addGap(12, 12, 12))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        lbReceitaMensal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbReceitaMensal.setText("Receita Mensal");
+        ttlReceitaMensal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        ttlReceitaMensal.setText("Receita Mensal");
 
-        lbDespesaMensal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbDespesaMensal.setText("Despesa Mensal");
-
-        lbValorReceitaMensal.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        lbValorReceitaMensal.setText("R$...");
-
-        lbValorDespesaMensal.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        lbValorDespesaMensal.setText("R$...");
+        ttlDespesaMensal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        ttlDespesaMensal.setText("Despesa Mensal");
 
         btVisualizarRelatorioMensal.setText("Visualizar Relatório");
+        btVisualizarRelatorioMensal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btVisualizarRelatorioMensalActionPerformed(evt);
+            }
+        });
 
         btGerarRelatorioMensal.setText("Gerar Relatório");
         btGerarRelatorioMensal.addActionListener(new java.awt.event.ActionListener() {
@@ -208,6 +265,18 @@ public class PessoaGUI extends javax.swing.JFrame {
             }
         });
 
+        lbValorReceitaMensal2.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        lbValorReceitaMensal2.setText("R$");
+
+        lbReceitaMensal.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        lbReceitaMensal.setText("...");
+
+        lbValorReceitaMensal3.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        lbValorReceitaMensal3.setText("R$");
+
+        lbDespesaMensal.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        lbDespesaMensal.setText("...");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -217,29 +286,39 @@ public class PessoaGUI extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btVisualizarRelatorioMensal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbReceitaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbDespesaMensal)
-                            .addComponent(lbValorReceitaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbValorDespesaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(btGerarRelatorioMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btGravarRelatorioMensal, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)))
+                        .addComponent(btGravarRelatorioMensal, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ttlReceitaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ttlDespesaMensal)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(lbValorReceitaMensal2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbReceitaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(lbValorReceitaMensal3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbDespesaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbReceitaMensal)
+                .addComponent(ttlReceitaMensal)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbValorReceitaMensal)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbValorReceitaMensal2)
+                    .addComponent(lbReceitaMensal))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbDespesaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ttlDespesaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbValorDespesaMensal)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbValorReceitaMensal3)
+                    .addComponent(lbDespesaMensal))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btVisualizarRelatorioMensal)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -255,7 +334,7 @@ public class PessoaGUI extends javax.swing.JFrame {
         lbReceitaMensal1.setText("Conta:");
 
         lbValorReceitaMensal1.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        lbValorReceitaMensal1.setText("R$...");
+        lbValorReceitaMensal1.setText("R$");
 
         btGerenciarConta.setText("Gerenciar Conta");
         btGerenciarConta.addActionListener(new java.awt.event.ActionListener() {
@@ -267,8 +346,11 @@ public class PessoaGUI extends javax.swing.JFrame {
         lbReceitaMensal2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbReceitaMensal2.setText("Saldo atual");
 
-        lbValorReceitaMensal2.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        lbValorReceitaMensal2.setText("...");
+        lbNumeroContaBancaria.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        lbNumeroContaBancaria.setText("...");
+
+        lbSaldoContaBancariaAtual.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        lbSaldoContaBancariaAtual.setText("...");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -280,12 +362,13 @@ public class PessoaGUI extends javax.swing.JFrame {
                     .addComponent(btGerenciarConta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbValorReceitaMensal1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbReceitaMensal2)
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(lbReceitaMensal1)
+                                .addComponent(lbValorReceitaMensal1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbValorReceitaMensal2, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lbReceitaMensal2))
+                                .addComponent(lbSaldoContaBancariaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lbReceitaMensal1)
+                            .addComponent(lbNumeroContaBancaria, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -295,12 +378,14 @@ public class PessoaGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lbReceitaMensal2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbValorReceitaMensal1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbReceitaMensal1)
-                    .addComponent(lbValorReceitaMensal2))
+                    .addComponent(lbValorReceitaMensal1)
+                    .addComponent(lbSaldoContaBancariaAtual))
+                .addGap(18, 18, 18)
+                .addComponent(lbReceitaMensal1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbNumeroContaBancaria)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btGerenciarConta)
                 .addContainerGap())
         );
@@ -310,9 +395,6 @@ public class PessoaGUI extends javax.swing.JFrame {
         lbReceitaMensal4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbReceitaMensal4.setText("Receitas até o momento");
 
-        lbReceitaMensal10.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbReceitaMensal10.setText("R$...");
-
         btGerarDemReceitaAtual.setText("Gerar Demonstrativo");
         btGerarDemReceitaAtual.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -320,19 +402,26 @@ public class PessoaGUI extends javax.swing.JFrame {
             }
         });
 
+        lbReceitaMensal15.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbReceitaMensal15.setText("R$");
+
+        lbValorReceitasAtuais.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbValorReceitasAtuais.setText("...");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbReceitaMensal4)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(lbReceitaMensal15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbValorReceitasAtuais))
+                    .addComponent(lbReceitaMensal4))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbReceitaMensal10)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btGerarDemReceitaAtual)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -343,19 +432,18 @@ public class PessoaGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lbReceitaMensal4)
                 .addGap(36, 36, 36)
-                .addComponent(lbReceitaMensal10)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbValorReceitasAtuais)
+                    .addComponent(lbReceitaMensal15))
                 .addGap(18, 18, 18)
                 .addComponent(btGerarDemReceitaAtual)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(32, 32, 32))
         );
 
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lbReceitaMensal3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbReceitaMensal3.setText("Despesas até o momento");
-
-        lbReceitaMensal12.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbReceitaMensal12.setText("R$...");
 
         btGerarDemDespesaAtual.setText("Gerar Demonstrativo");
         btGerarDemDespesaAtual.addActionListener(new java.awt.event.ActionListener() {
@@ -364,46 +452,59 @@ public class PessoaGUI extends javax.swing.JFrame {
             }
         });
 
+        lbValorDepesasAtuais.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbValorDepesasAtuais.setText("...");
+
+        lbReceitaMensal18.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbReceitaMensal18.setText("R$");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lbReceitaMensal12)
-                    .addComponent(lbReceitaMensal3))
+                .addComponent(lbReceitaMensal3)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(86, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btGerarDemDespesaAtual)
-                .addGap(81, 81, 81))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel6Layout.createSequentialGroup()
+                    .addGap(132, 132, 132)
+                    .addComponent(lbReceitaMensal18)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(lbValorDepesasAtuais)
+                    .addContainerGap(143, Short.MAX_VALUE)))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lbReceitaMensal3)
-                .addGap(45, 45, 45)
-                .addComponent(lbReceitaMensal12)
-                .addGap(18, 18, 18)
+                .addGap(88, 88, 88)
                 .addComponent(btGerarDemDespesaAtual)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addGap(38, 38, 38))
+            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel6Layout.createSequentialGroup()
+                    .addGap(75, 75, 75)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lbValorDepesasAtuais)
+                        .addComponent(lbReceitaMensal18))
+                    .addContainerGap(75, Short.MAX_VALUE)))
         );
 
         jPanel7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        lbReceitaMensal5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbReceitaMensal5.setText("Conta:");
-
-        lbValorReceitaMensal3.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        lbValorReceitaMensal3.setText("R$...");
-
         lbReceitaMensal6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbReceitaMensal6.setText("Saldo futuro/geral");
+        lbReceitaMensal6.setText("Saldo geral");
 
-        lbValorReceitaMensal4.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        lbValorReceitaMensal4.setText("...");
+        lbReceitaMensal14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbReceitaMensal14.setText("R$");
+
+        lbValorSaldoGeral.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbValorSaldoGeral.setText("...");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -411,11 +512,13 @@ public class PessoaGUI extends javax.swing.JFrame {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbValorReceitaMensal3, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbReceitaMensal5)
-                    .addComponent(lbReceitaMensal6)
-                    .addComponent(lbValorReceitaMensal4, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(lbReceitaMensal6)
+                .addContainerGap(206, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lbReceitaMensal14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbValorSaldoGeral)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
@@ -423,22 +526,17 @@ public class PessoaGUI extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lbReceitaMensal6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbValorReceitaMensal3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(lbReceitaMensal5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lbValorReceitaMensal4)
-                .addGap(11, 11, 11))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbValorSaldoGeral)
+                    .addComponent(lbReceitaMensal14))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel8.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lbReceitaMensal7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbReceitaMensal7.setText("Receitas Futuras");
-
-        lbReceitaMensal11.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbReceitaMensal11.setText("R$...");
 
         btGerarDemReceitaFutura.setText("Gerar Demonstrativo");
         btGerarDemReceitaFutura.addActionListener(new java.awt.event.ActionListener() {
@@ -447,21 +545,30 @@ public class PessoaGUI extends javax.swing.JFrame {
             }
         });
 
+        lbValorReceitasFuturas.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbValorReceitasFuturas.setText("...");
+
+        lbReceitaMensal16.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbReceitaMensal16.setText("R$");
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbReceitaMensal7)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbReceitaMensal11)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lbReceitaMensal7))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btGerarDemReceitaFutura)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btGerarDemReceitaFutura)
+                .addGap(142, 142, 142)
+                .addComponent(lbReceitaMensal16)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbValorReceitasFuturas)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
@@ -470,7 +577,9 @@ public class PessoaGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lbReceitaMensal7)
                 .addGap(36, 36, 36)
-                .addComponent(lbReceitaMensal11)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbValorReceitasFuturas)
+                    .addComponent(lbReceitaMensal16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btGerarDemReceitaFutura)
                 .addContainerGap())
@@ -481,15 +590,18 @@ public class PessoaGUI extends javax.swing.JFrame {
         lbReceitaMensal8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbReceitaMensal8.setText("Despesas futuras");
 
-        lbReceitaMensal13.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbReceitaMensal13.setText("R$...");
-
         btGerarDemDespesaFutura.setText("Gerar Demonstrativo");
         btGerarDemDespesaFutura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btGerarDemDespesaFuturaActionPerformed(evt);
             }
         });
+
+        lbValorDepesasFuturas.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbValorDepesasFuturas.setText("...");
+
+        lbReceitaMensal17.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbReceitaMensal17.setText("R$");
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -501,23 +613,31 @@ public class PessoaGUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbReceitaMensal13)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                .addContainerGap(95, Short.MAX_VALUE)
                 .addComponent(btGerarDemDespesaFutura)
                 .addGap(91, 91, 91))
+            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel9Layout.createSequentialGroup()
+                    .addGap(142, 142, 142)
+                    .addComponent(lbReceitaMensal17)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(lbValorDepesasFuturas)
+                    .addContainerGap(136, Short.MAX_VALUE)))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lbReceitaMensal8)
-                .addGap(45, 45, 45)
-                .addComponent(lbReceitaMensal13)
-                .addGap(18, 18, 18)
+                .addGap(88, 88, 88)
                 .addComponent(btGerarDemDespesaFutura)
                 .addContainerGap())
+            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel9Layout.createSequentialGroup()
+                    .addGap(75, 75, 75)
+                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lbValorDepesasFuturas)
+                        .addComponent(lbReceitaMensal17))
+                    .addContainerGap(75, Short.MAX_VALUE)))
         );
 
         jPanel10.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -546,17 +666,19 @@ public class PessoaGUI extends javax.swing.JFrame {
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
-                .addGap(235, 235, 235)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lbReceitaMensal9)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel10Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btVisualizarRelatorioGeral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel10Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
                         .addComponent(btGerarRelatoriaGeral, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btCarregarRelatorioGeral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btCarregarRelatorioGeral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(8, 8, 8)))
                 .addContainerGap())
         );
         jPanel10Layout.setVerticalGroup(
@@ -570,12 +692,8 @@ public class PessoaGUI extends javax.swing.JFrame {
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btGerarRelatoriaGeral)
                     .addComponent(btCarregarRelatorioGeral))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addGap(29, 29, 29))
         );
-
-        lbValorReceitaMensal5.setFont(new java.awt.Font("Segoe UI", 2, 13)); // NOI18N
-        lbValorReceitaMensal5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbValorReceitaMensal5.setText("Powered by us");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -587,20 +705,19 @@ public class PessoaGUI extends javax.swing.JFrame {
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbValorReceitaMensal5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -610,46 +727,49 @@ public class PessoaGUI extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbValorReceitaMensal5, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btGerarRelatorioMensalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarRelatorioMensalActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btGerarRelatorioMensalActionPerformed
-
-    private void btGravarRelatorioMensalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGravarRelatorioMensalActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btGravarRelatorioMensalActionPerformed
-
     private void btGerenciarContaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerenciarContaActionPerformed
-        // TODO add your handling code here:
+        GerenciarContaGUI gerenciarConta = new GerenciarContaGUI(this, true, pessoa, conta);
+        gerenciarConta.setVisible(true);
+        alterarTextos();
     }//GEN-LAST:event_btGerenciarContaActionPerformed
 
     private void btAdicionarReceitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarReceitaActionPerformed
-        // TODO add your handling code here:
+        try {
+            AdicionarReceitaGUI adcReceitaGUI = new AdicionarReceitaGUI(this, true, pessoa); // Passar o objeto pessoa
+            adcReceitaGUI.setVisible(true);
+            alterarTextos();
+//            lbSaldoContaBancariaAtual.setText(conta.consultaSaldoAtual().toString());
+//            lbValorSaldoGeral.setText(conta.consultaSaldoIndependentePeriodo().toString());
+//            lbValorReceitasAtuais.setText(conta.consultarValorReceitasAtual().toString());
+//            lbValorReceitasFuturas.setText(conta.consultarValorReceitasFuturo().toString());
+//            lbReceitaMensal.setText(conta.consultarValorReceitasMensal().toString());
+        } catch(IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        } 
     }//GEN-LAST:event_btAdicionarReceitaActionPerformed
 
     private void btRemoverReceitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoverReceitaActionPerformed
@@ -665,57 +785,96 @@ public class PessoaGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btCarregarRelatorioGeralActionPerformed
 
     private void btGerarDemReceitaAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemReceitaAtualActionPerformed
-        // TODO add your handling code here:
+
+        if(pessoa.retornarReceitas().isEmpty()){
+            JOptionPane.showMessageDialog(this, "Nenhuma receita inserida!");
+        } else {
+            VisDemonstrativoRecAtual vdra = new VisDemonstrativoRecAtual(this, true, pessoa);
+            vdra.setVisible(true);
+        }
     }//GEN-LAST:event_btGerarDemReceitaAtualActionPerformed
 
     private void btGerarDemReceitaFuturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemReceitaFuturaActionPerformed
-        // TODO add your handling code here:
+        if(pessoa.retornarReceitas().isEmpty()){
+            JOptionPane.showMessageDialog(this, "Nenhuma despesa inserida!");
+        } else {
+            VisDemonstrativoRecFutura vdrf = new VisDemonstrativoRecFutura(this, true, pessoa);
+            vdrf.setVisible(true);
+        }
     }//GEN-LAST:event_btGerarDemReceitaFuturaActionPerformed
 
     private void btGerarDemDespesaAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemDespesaAtualActionPerformed
-        // TODO add your handling code here:
+        if(pessoa.retornarDespesas().isEmpty()){
+            JOptionPane.showMessageDialog(this, "Nenhuma despesa inserida!");
+        } else {
+            VisDemonstrativoDespAtual vdda = new VisDemonstrativoDespAtual(this, true, pessoa);
+            vdda.setVisible(true);
+        }
     }//GEN-LAST:event_btGerarDemDespesaAtualActionPerformed
 
     private void btGerarDemDespesaFuturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemDespesaFuturaActionPerformed
-        // TODO add your handling code here:
+        
+        if(pessoa.retornarDespesas().isEmpty()){
+            JOptionPane.showMessageDialog(this, "Nenhuma despesa inserida!");
+        } else {
+            VisDemonstrativoDespFutura vddf = new VisDemonstrativoDespFutura(this, true, pessoa);
+            vddf.setVisible(true);
+        }
     }//GEN-LAST:event_btGerarDemDespesaFuturaActionPerformed
+
+    private void btAdicionarDespesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarDespesaActionPerformed
+        try {
+            AdicionarDespesaGUI adcDespesaGUI = new AdicionarDespesaGUI(this, true, pessoa); // Passar o objeto pessoa
+            adcDespesaGUI.setVisible(true);
+            alterarTextos();
+//            lbSaldoContaBancariaAtual.setText(conta.consultaSaldoAtual().toString());
+//            lbValorSaldoGeral.setText(conta.consultaSaldoIndependentePeriodo().toString());
+//            lbValorDepesasAtuais.setText(conta.consultarValorDespesasAtual().toString());
+//            lbValorDepesasFuturas.setText(conta.consultarValorDespesasFuturo().toString());
+//            lbDespesaMensal.setText(conta.consultarValorDespesasMensal().toString());
+        } catch(IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        } 
+    }//GEN-LAST:event_btAdicionarDespesaActionPerformed
+
+    private void btRemoverReceita1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoverReceita1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btRemoverReceita1ActionPerformed
+
+    private void btVisualizarRelatorioMensalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btVisualizarRelatorioMensalActionPerformed
+        VisRelatorioMensal jdf = new VisRelatorioMensal(this, true);
+        jdf.setVisible(true);
+    }//GEN-LAST:event_btVisualizarRelatorioMensalActionPerformed
+
+    private void btGravarRelatorioMensalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGravarRelatorioMensalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btGravarRelatorioMensalActionPerformed
+
+    private void btGerarRelatorioMensalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarRelatorioMensalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btGerarRelatorioMensalActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PessoaGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PessoaGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PessoaGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PessoaGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+public static void main(String args[]) {
+    // ... (restante do código)
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PessoaGUI(args[0]).setVisible(true);
+    /* Create and display the form */
+    java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            if (args.length >= 3) { // Verifica se há argumentos suficientes
+                new PessoaGUI(args[0], args[1]).setVisible(true); 
+            } else {
+                // Lida com o caso de argumentos insuficientes (ex: exibir mensagem de erro)
+                System.err.println("Erro: Nome, número da conta e saldo são obrigatórios.");
             }
-        });
-    }
+        }
+    });
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btAdicionarDespesa;
     private javax.swing.JButton btAdicionarReceita;
     private javax.swing.JButton btCarregarRelatorioGeral;
     private javax.swing.JButton btGerarDemDespesaAtual;
@@ -727,6 +886,7 @@ public class PessoaGUI extends javax.swing.JFrame {
     private javax.swing.JButton btGerenciarConta;
     private javax.swing.JButton btGravarRelatorioMensal;
     private javax.swing.JButton btRemoverReceita;
+    private javax.swing.JButton btRemoverReceita1;
     private javax.swing.JButton btVisualizarRelatorioGeral;
     private javax.swing.JButton btVisualizarRelatorioMensal;
     private javax.swing.JPanel jPanel1;
@@ -741,27 +901,32 @@ public class PessoaGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JLabel lbDespesaMensal;
     private javax.swing.JLabel lbNomeUsuario;
+    private javax.swing.JLabel lbNumeroContaBancaria;
     private javax.swing.JLabel lbReceitaMensal;
     private javax.swing.JLabel lbReceitaMensal1;
-    private javax.swing.JLabel lbReceitaMensal10;
-    private javax.swing.JLabel lbReceitaMensal11;
-    private javax.swing.JLabel lbReceitaMensal12;
-    private javax.swing.JLabel lbReceitaMensal13;
+    private javax.swing.JLabel lbReceitaMensal14;
+    private javax.swing.JLabel lbReceitaMensal15;
+    private javax.swing.JLabel lbReceitaMensal16;
+    private javax.swing.JLabel lbReceitaMensal17;
+    private javax.swing.JLabel lbReceitaMensal18;
     private javax.swing.JLabel lbReceitaMensal2;
     private javax.swing.JLabel lbReceitaMensal3;
     private javax.swing.JLabel lbReceitaMensal4;
-    private javax.swing.JLabel lbReceitaMensal5;
     private javax.swing.JLabel lbReceitaMensal6;
     private javax.swing.JLabel lbReceitaMensal7;
     private javax.swing.JLabel lbReceitaMensal8;
     private javax.swing.JLabel lbReceitaMensal9;
+    private javax.swing.JLabel lbSaldoContaBancariaAtual;
     private javax.swing.JLabel lbSaudacao;
-    private javax.swing.JLabel lbValorDespesaMensal;
-    private javax.swing.JLabel lbValorReceitaMensal;
+    private javax.swing.JLabel lbValorDepesasAtuais;
+    private javax.swing.JLabel lbValorDepesasFuturas;
     private javax.swing.JLabel lbValorReceitaMensal1;
     private javax.swing.JLabel lbValorReceitaMensal2;
     private javax.swing.JLabel lbValorReceitaMensal3;
-    private javax.swing.JLabel lbValorReceitaMensal4;
-    private javax.swing.JLabel lbValorReceitaMensal5;
+    private javax.swing.JLabel lbValorReceitasAtuais;
+    private javax.swing.JLabel lbValorReceitasFuturas;
+    private javax.swing.JLabel lbValorSaldoGeral;
+    private javax.swing.JLabel ttlDespesaMensal;
+    private javax.swing.JLabel ttlReceitaMensal;
     // End of variables declaration//GEN-END:variables
 }

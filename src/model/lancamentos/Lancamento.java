@@ -5,41 +5,50 @@
  */
 package model.lancamentos;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 /**
  *
  * @author csoler
  */
 public class Lancamento {
-    private BigInteger valor;
+
+    private BigDecimal valor;
     private LocalDate dataLancamento;
 
-    public Lancamento(BigInteger valor, LocalDate dataLancamento) {
-       setValor(valor);
-       setDataLancamento(dataLancamento);
+    public Lancamento(LocalDate dataLancamento, String valor) throws IllegalArgumentException, NumberFormatException{
+        setDataLancamento(dataLancamento);
+        setValor(valor);
     }
 
     public LocalDate getDataLancamento() {
-        if(dataLancamento == null) {
-            throw new IllegalArgumentException("Data de lançamento não pode ser nula");
-        }
         return dataLancamento;
     }
 
     public void setDataLancamento(LocalDate dataLancamento) {
         this.dataLancamento = dataLancamento;
+
     }
 
-    public BigInteger getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
-    public void setValor(BigInteger valor) {
-        if(valor == null || valor.compareTo(BigInteger.ZERO) < 0) {
-            throw new IllegalArgumentException("Valor não pode ser nulo");
+    public void setValor(String valor) {
+        try {
+            if (valor.equals("")) {
+                throw new IllegalArgumentException("Valor não pode ser vazio ou nulo.");
+            }
+            BigDecimal valorConvertido = new BigDecimal(valor);
+            if (valorConvertido.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Valor inserido deve ser maior que zero!");
+            }
+            this.valor = valorConvertido;
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Valor inserido deve ser um número válido.");
         }
-        this.valor = valor;
     }
 }
