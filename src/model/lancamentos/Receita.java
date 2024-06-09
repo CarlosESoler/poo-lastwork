@@ -16,13 +16,7 @@ import java.util.Date;
  */
 public class Receita extends Lancamento {
     TipoReceita tipoReceita;
-    
-    /**
-     * Construtor define os valores iniciais da receita a ser inserida
-     * @param valor
-     * @param dataLancamento
-     * @param tipoReceita 
-     */
+
     public Receita(LocalDate dataLancamento, TipoReceita tipoReceita, String valor) {
         super(dataLancamento, valor);
         setTipoReceita(tipoReceita);

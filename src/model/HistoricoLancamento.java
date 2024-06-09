@@ -17,7 +17,7 @@ public class HistoricoLancamento {
     HashMap<Integer, Lancamento> historico = new HashMap<>();
     
     public void addHistorico(Lancamento lancamento) {
-        historico.put((Math.random() * 100), lancamento);
+        historico.put((int) (Math.random() * 100), lancamento);
     }
     
     public void removeHistorico(int id) throws IllegalAccessException {

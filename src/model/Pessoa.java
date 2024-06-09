@@ -20,8 +20,8 @@ import java.util.*;
 public class Pessoa implements Serializable {
     private static final long serialVersionUID = 2L;
     private String nome;
-    private List<Receita> receitas = new ArrayList<>();
-    private List<Despesa> despesas = new ArrayList<>();
+    private final List<Receita> receitas = new ArrayList<>();
+    private final List<Despesa> despesas = new ArrayList<>();
     private ContaBancaria conta;
 
     public Pessoa(String nome) throws IllegalArgumentException{
@@ -39,11 +39,11 @@ public class Pessoa implements Serializable {
         this.nome = nome;
     }
 
-    public List<Receita> retornarReceitas() {
+    public List<Receita> getReceitas() {
         return receitas;
     }
 
-    public List<Despesa> retornarDespesas() {
+    public List<Despesa> getDespesas() {
         return despesas;
     }
 
@@ -84,7 +84,7 @@ public class Pessoa implements Serializable {
     
     public List<Despesa> exibirDemonstrativoDespesasAtuais (){
         List<Despesa> sortedDespesas = new ArrayList<>();
-        for (Despesa r : retornarDespesas()) {
+        for (Despesa r : getDespesas()) {
             if (r.getDataLancamento().isBefore(LocalDate.now())
                     || r.getDataLancamento().isEqual(LocalDate.now())) {
                 sortedDespesas.add(r);
@@ -97,7 +97,7 @@ public class Pessoa implements Serializable {
     
     public List<Receita> exibirDemonstrativoReceitasAtuais() {
         List<Receita> sortedReceita = new ArrayList<>();
-            for (Receita r : retornarReceitas()) {
+            for (Receita r : getReceitas()) {
                 if (r.getDataLancamento().isBefore(LocalDate.now()) || r.getDataLancamento().isEqual(LocalDate.now())) {
                     sortedReceita.add(r);
                 }
@@ -108,7 +108,7 @@ public class Pessoa implements Serializable {
     
     public List<Receita> exibirDemonstrativoReceitasFuturas() {
         List<Receita> sortedReceita = new ArrayList<>();
-            for (Receita r : retornarReceitas()) {
+            for (Receita r : getReceitas()) {
                 if (r.getDataLancamento().isAfter(LocalDate.now())) {
                     sortedReceita.add(r);
                 }
@@ -119,13 +119,27 @@ public class Pessoa implements Serializable {
     
     public List<Despesa> exibirDemonstrativoDespesasFuturas() {
         List<Despesa> sortedDespesa = new ArrayList<>();
-            for (Despesa r : retornarDespesas()) {
+            for (Despesa r : getDespesas()) {
                 if (r.getDataLancamento().isAfter(LocalDate.now())) {
                     sortedDespesa.add(r);
                 }
             }
             sortedDespesa.sort(Comparator.comparing(Lancamento::getDataLancamento));
         return sortedDespesa;
+    }
+
+    public void removerReceita(Receita receita) {
+        if(receita == null) {
+            throw new IllegalArgumentException("Receita não pode ser nula");
+        }
+        receitas.remove(receita);
+    }
+
+    public void removerDespesa(Despesa despesa) {
+        if(despesa == null) {
+            throw new IllegalArgumentException("Despesa não pode ser nula");
+        }
+        despesas.remove(despesa);
     }
     
     public List<Lancamento> listaLancamentosPorData() {

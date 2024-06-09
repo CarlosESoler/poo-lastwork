@@ -12,9 +12,6 @@ import model.lancamentos.Receita;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  *
@@ -26,7 +23,7 @@ public class ContaBancaria implements Serializable {
     private String numero;
     private BigDecimal saldo = BigDecimal.ZERO;
     private Pessoa titular;
-    private HistoricoLancamento historicoLancamento = new HistoricoLancamento();
+    private final HistoricoLancamento historicoLancamento = new HistoricoLancamento();
     
     //Construtor: inicializa settando o número da conta bancária
     public ContaBancaria(String numero) {
@@ -85,16 +82,14 @@ public class ContaBancaria implements Serializable {
     public BigDecimal consultaSaldoAtual() {
         BigDecimal saldoAtual = getSaldo();
 
-        for (Receita r : getTitular().retornarReceitas()) {
-            if (r.getDataLancamento().isBefore(LocalDate.now())
-                    || r.getDataLancamento().isEqual(LocalDate.now())) {
+        for (Receita r : getTitular().getReceitas()) {
+            if (isDataMenorOuIgual(r.getDataLancamento())) {
                 saldoAtual = saldoAtual.add(r.getValor());
             }
         }
 
-        for (Despesa d : getTitular().retornarDespesas()) {
-            if (d.getDataLancamento().isBefore(LocalDate.now())
-                    || d.getDataLancamento().isEqual(LocalDate.now())) {
+        for (Despesa d : getTitular().getDespesas()) {
+            if (isDataMenorOuIgual(d.getDataLancamento())) {
                 saldoAtual = saldoAtual.subtract(d.getValor());
             }
         }
@@ -104,11 +99,11 @@ public class ContaBancaria implements Serializable {
     public BigDecimal consultaSaldoIndependentePeriodo() {
         BigDecimal saldoAtual = getSaldo();
 
-        for (Receita r : getTitular().retornarReceitas()) {
+        for (Receita r : getTitular().getReceitas()) {
             saldoAtual = saldoAtual.add(r.getValor());
         }
 
-        for (Despesa d : getTitular().retornarDespesas()) {
+        for (Despesa d : getTitular().getDespesas()) {
             saldoAtual = saldoAtual.subtract(d.getValor());
         }
         return saldoAtual;
@@ -116,9 +111,8 @@ public class ContaBancaria implements Serializable {
     
     public BigDecimal consultarValorReceitasAtual (){
         BigDecimal valorReceitas = getSaldo();
-        for (Receita r : getTitular().retornarReceitas()) {
-            if (r.getDataLancamento().isBefore(LocalDate.now())
-                    || r.getDataLancamento().isEqual(LocalDate.now())) {
+        for (Receita r : getTitular().getReceitas()) {
+            if (isDataMenorOuIgual(r.getDataLancamento())) {
                 valorReceitas = valorReceitas.add(r.getValor());
             }
         }
@@ -127,10 +121,9 @@ public class ContaBancaria implements Serializable {
     
     public BigDecimal consultarValorDespesasAtual (){
         BigDecimal valorDespesas = getSaldo();
-        for (Despesa r : getTitular().retornarDespesas()) {
-            if (r.getDataLancamento().isBefore(LocalDate.now())
-                    || r.getDataLancamento().isEqual(LocalDate.now())) {
-                valorDespesas = valorDespesas.add(r.getValor());
+        for (Despesa d : getTitular().getDespesas()) {
+            if (isDataMenorOuIgual(d.getDataLancamento())) {
+                valorDespesas = valorDespesas.add(d.getValor());
             }
         }
         return valorDespesas;
@@ -138,7 +131,7 @@ public class ContaBancaria implements Serializable {
     
     public BigDecimal consultarValorReceitasFuturo (){
         BigDecimal valorReceitas = getSaldo();
-        for (Receita r : getTitular().retornarReceitas()) {
+        for (Receita r : getTitular().getReceitas()) {
             if (r.getDataLancamento().isAfter(LocalDate.now())) {
                 valorReceitas = valorReceitas.add(r.getValor());
             }
@@ -148,7 +141,7 @@ public class ContaBancaria implements Serializable {
    
     public BigDecimal consultarValorDespesasFuturo (){
         BigDecimal valorDespesas = getSaldo();
-        for (Despesa r : getTitular().retornarDespesas()) {
+        for (Despesa r : getTitular().getDespesas()) {
             if (r.getDataLancamento().isAfter(LocalDate.now())) {
                 valorDespesas = valorDespesas.add(r.getValor());
             }
@@ -158,7 +151,7 @@ public class ContaBancaria implements Serializable {
     
     public BigDecimal consultarValorReceitasMensal (){
         BigDecimal valorReceitas = getSaldo();
-        for (Receita r : getTitular().retornarReceitas()) {
+        for (Receita r : getTitular().getReceitas()) {
             if (r.getDataLancamento().getMonth() == (LocalDate.now().getMonth())) {
                 valorReceitas = valorReceitas.add(r.getValor());
             }
@@ -168,7 +161,7 @@ public class ContaBancaria implements Serializable {
     
     public BigDecimal consultarValorDespesasMensal (){
         BigDecimal valorDespesas = getSaldo();
-        for (Despesa r : getTitular().retornarDespesas()) {
+        for (Despesa r : getTitular().getDespesas()) {
             if (r.getDataLancamento().getMonth() == (LocalDate.now().getMonth())) {
                 valorDespesas = valorDespesas.add(r.getValor());
             }
@@ -177,5 +170,13 @@ public class ContaBancaria implements Serializable {
     }
     public void addHistoricoLancamento(Lancamento lancamento) {
         historicoLancamento.addHistorico(lancamento);
+    }
+
+    public boolean isDataMaiorOuIgual(LocalDate data) {
+        return data.isAfter(LocalDate.now()) || data.isEqual(LocalDate.now());
+    }
+
+    public boolean isDataMenorOuIgual(LocalDate data) {
+        return data.isBefore(LocalDate.now()) || data.isEqual(LocalDate.now());
     }
 }
