@@ -20,8 +20,8 @@ import java.util.*;
 public class Pessoa implements Serializable {
     private static final long serialVersionUID = 2L;
     private String nome;
-    private final List<Receita> receitas = new ArrayList<>();
-    private final List<Despesa> despesas = new ArrayList<>();
+    private final HashMap<Integer, Receita> receitas = new HashMap<>();
+    private final HashMap<Integer, Despesa> despesas = new HashMap<>();
     private ContaBancaria conta;
 
     public Pessoa(String nome) throws IllegalArgumentException{
@@ -40,11 +40,11 @@ public class Pessoa implements Serializable {
     }
 
     public List<Receita> getReceitas() {
-        return receitas;
+        return receitas.values().stream().toList();
     }
 
     public List<Despesa> getDespesas() {
-        return despesas;
+        return despesas.values().stream().toList();
     }
 
     public ContaBancaria getConta() {
@@ -58,20 +58,20 @@ public class Pessoa implements Serializable {
         this.conta = conta;
     }
 
-    public void adicionarReceita(Receita receita){
+    public void adicionarReceita(Integer id, Receita receita){
         if(receita == null) {
             throw new IllegalArgumentException("Receita não pode ser nula");
         }
-        receitas.add(receita);
-//        conta.addHistoricoDeLancamentos(receita);
+        new HistoricoLancamento(receita, getConta().getSaldo());
+        receitas.put(id, receita);
     }
 
-    public void adicionarDespesa(Despesa despesa) {
+    public void adicionarDespesa(Integer id, Despesa despesa) {
         if(despesa == null) {
             throw new IllegalArgumentException("Despesa não pode ser nula");
         }
-        this.despesas.add(despesa);
-//        conta.addHistoricoDeLancamentos(despesa);
+        new HistoricoLancamento(despesa, getConta().consultaSaldoAtual());
+        this.despesas.put(id, despesa);
     }
     
     public void removerTodasReceitas(){
@@ -128,31 +128,23 @@ public class Pessoa implements Serializable {
         return sortedDespesa;
     }
 
-    public void removerReceita(Receita receita) {
-        if(receita == null) {
-            throw new IllegalArgumentException("Receita não pode ser nula");
+    public void removerReceita(Integer id) {
+        if(id == null) {
+            throw new IllegalArgumentException("O ID não pode ser nulo");
         }
-        receitas.remove(receita);
+        if(!receitas.containsKey(id)) {
+            throw new IllegalArgumentException("Receita não encontrada");
+        }
+        receitas.remove(id);
     }
 
-    public void removerDespesa(Despesa despesa) {
-        if(despesa == null) {
+    public void removerDespesa(Integer id) {
+        if(id == null) {
             throw new IllegalArgumentException("Despesa não pode ser nula");
         }
-        despesas.remove(despesa);
-    }
-    
-    public List<Lancamento> listaLancamentosPorData() {
-        List<Despesa> sortedDespesas = new ArrayList<>(despesas);
-        List<Receita> sortedReceitas = new ArrayList<>(receitas);
-
-        sortedDespesas.sort(Comparator.comparing(Lancamento::getDataLancamento));
-        sortedReceitas.sort(Comparator.comparing(Lancamento::getDataLancamento));
-
-        List<Lancamento> sortedLancamentos = new ArrayList<>();
-        sortedLancamentos.addAll(sortedDespesas);
-        sortedLancamentos.addAll(sortedReceitas);
-
-        return sortedLancamentos;
+        if(!despesas.containsKey(id)) {
+            throw new IllegalArgumentException("Receita não encontrada");
+        }
+        despesas.remove(id);
     }
 }

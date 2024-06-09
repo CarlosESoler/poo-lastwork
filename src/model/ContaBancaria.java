@@ -23,9 +23,7 @@ public class ContaBancaria implements Serializable {
     private String numero;
     private BigDecimal saldo = BigDecimal.ZERO;
     private Pessoa titular;
-    private final HistoricoLancamento historicoLancamento = new HistoricoLancamento();
-    
-    //Construtor: inicializa settando o número da conta bancária
+
     public ContaBancaria(String numero) {
         setNumero(numero);
     }
@@ -37,7 +35,7 @@ public class ContaBancaria implements Serializable {
         }
         this.numero = numero;
     }
-    //Capta o número da conta bancária
+
     public String getNumero() {
         return numero;
     }
@@ -167,13 +165,6 @@ public class ContaBancaria implements Serializable {
             }
         }
         return valorDespesas;
-    }
-    public void addHistoricoLancamento(Lancamento lancamento) {
-        historicoLancamento.addHistorico(lancamento);
-    }
-
-    public boolean isDataMaiorOuIgual(LocalDate data) {
-        return data.isAfter(LocalDate.now()) || data.isEqual(LocalDate.now());
     }
 
     public boolean isDataMenorOuIgual(LocalDate data) {
