@@ -9,29 +9,21 @@ import model.lancamentos.Despesa;
 import model.lancamentos.Lancamento;
 import model.lancamentos.Receita;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
  * @author csoler
  */
 public class ContaBancaria implements Serializable {
-    @Serial
     private static final long serialVersionUID = 1L;
 
     private String numero;
     private BigDecimal saldo = BigDecimal.ZERO;
     private Pessoa titular;
-    private final Map<Lancamento, List<BigDecimal>> historicoLancamentos = new HashMap<>();
-    
-    //Construtor: inicializa settando o número da conta bancária
+
     public ContaBancaria(String numero) {
         setNumero(numero);
     }
@@ -43,7 +35,7 @@ public class ContaBancaria implements Serializable {
         }
         this.numero = numero;
     }
-    //Capta o número da conta bancária
+
     public String getNumero() {
         return numero;
     }
@@ -53,12 +45,6 @@ public class ContaBancaria implements Serializable {
         return saldo;
     }
 
-    /*
-        Avaliar usabilidade, pois é um controle de despesa e receitas,
-        se o usuário pode definir o valor, ele quebra a lógica de análise,
-        o mesmo deveria ter a visão desse saldo a partir das inserções das
-        despesas e receitas.
-    */
     private void setSaldo(BigDecimal saldo) {
         if(saldo == null || saldo.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Saldo não pode ser nulo ou negativo");
@@ -66,12 +52,10 @@ public class ContaBancaria implements Serializable {
         this.saldo = saldo;
     }
     
-    //Getter: Capta o titular da conta
     public Pessoa getTitular() {
         return titular;
     }
     
-    //Setter: define o titular da conta
     public void setTitular(Pessoa titular) {
         if(titular == null) {
             throw new IllegalArgumentException("Titular da conta não pode ser nulo");
@@ -79,7 +63,6 @@ public class ContaBancaria implements Serializable {
         this.titular = titular;
     }
 
-    //Adiciona saldo à conta
     public BigDecimal somaSaldo(BigDecimal valor) {
         if(valor == null || valor.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Valor não pode ser nulo ou negativo");
@@ -87,7 +70,6 @@ public class ContaBancaria implements Serializable {
         return this.saldo = this.saldo.add(valor);
     }
     
-    //Subtrai saldo da conta
     public BigDecimal subtraiSaldo(BigDecimal valor) {
         if(valor == null || valor.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Valor não pode ser nulo ou negativo");
@@ -95,79 +77,69 @@ public class ContaBancaria implements Serializable {
         return this.saldo = this.saldo.subtract(valor);
     }
     
-    //Mostra o valor do saldo até o momento
     public BigDecimal consultaSaldoAtual() {
         BigDecimal saldoAtual = getSaldo();
 
-        for (Receita r : getTitular().retornarReceitas()) {
-            if (r.getDataLancamento().isBefore(LocalDate.now())
-                    || r.getDataLancamento().isEqual(LocalDate.now())) {
+        for (Receita r : getTitular().getReceitas()) {
+            if (isDataMenorOuIgual(r.getDataLancamento())) {
                 saldoAtual = saldoAtual.add(r.getValor());
             }
         }
 
-        for (Despesa d : getTitular().retornarDespesas()) {
-            if (d.getDataLancamento().isBefore(LocalDate.now())
-                    || d.getDataLancamento().isEqual(LocalDate.now())) {
+        for (Despesa d : getTitular().getDespesas()) {
+            if (isDataMenorOuIgual(d.getDataLancamento())) {
                 saldoAtual = saldoAtual.subtract(d.getValor());
             }
         }
         return saldoAtual;
     }
-    
-    //Mostra o saldo geral (atual + futuro)
+
     public BigDecimal consultaSaldoIndependentePeriodo() {
         BigDecimal saldoAtual = getSaldo();
 
-        for (Receita r : getTitular().retornarReceitas()) {
+        for (Receita r : getTitular().getReceitas()) {
             saldoAtual = saldoAtual.add(r.getValor());
         }
 
-        for (Despesa d : getTitular().retornarDespesas()) {
+        for (Despesa d : getTitular().getDespesas()) {
             saldoAtual = saldoAtual.subtract(d.getValor());
         }
         return saldoAtual;
     }
     
-    //Mostra o valor das receitas até o momento
     public BigDecimal consultarValorReceitasAtual (){
         BigDecimal valorReceitas = getSaldo();
-        for (Receita r : getTitular().retornarReceitas()) {
-            if (r.getDataLancamento().isBefore(LocalDate.now())
-                    || r.getDataLancamento().isEqual(LocalDate.now())) {
+        for (Receita r : getTitular().getReceitas()) {
+            if (isDataMenorOuIgual(r.getDataLancamento())) {
                 valorReceitas = valorReceitas.add(r.getValor());
             }
         }
         return valorReceitas;
     }
     
-    //Mostra o valor das despesas até o momento
     public BigDecimal consultarValorDespesasAtual (){
         BigDecimal valorDespesas = getSaldo();
-        for (Despesa r : getTitular().retornarDespesas()) {
-            if (r.getDataLancamento().isBefore(LocalDate.now())
-                    || r.getDataLancamento().isEqual(LocalDate.now())) {
-                valorDespesas = valorDespesas.add(r.getValor());
+        for (Despesa d : getTitular().getDespesas()) {
+            if (isDataMenorOuIgual(d.getDataLancamento())) {
+                valorDespesas = valorDespesas.add(d.getValor());
             }
         }
         return valorDespesas;
     }
     
-    //Mostra o valor das receitas futuras
     public BigDecimal consultarValorReceitasFuturo (){
         BigDecimal valorReceitas = getSaldo();
-        for (Receita r : getTitular().retornarReceitas()) {
+        for (Receita r : getTitular().getReceitas()) {
             if (r.getDataLancamento().isAfter(LocalDate.now())) {
                 valorReceitas = valorReceitas.add(r.getValor());
             }
         }
         return valorReceitas;
     }
-    
-    //Mostra o valor das despesas futuras
+   
     public BigDecimal consultarValorDespesasFuturo (){
         BigDecimal valorDespesas = getSaldo();
-        for (Despesa r : getTitular().retornarDespesas()) {
+        for (Despesa r : getTitular().getDespesas()) {
             if (r.getDataLancamento().isAfter(LocalDate.now())) {
                 valorDespesas = valorDespesas.add(r.getValor());
             }
@@ -175,10 +147,9 @@ public class ContaBancaria implements Serializable {
         return valorDespesas;
     }
     
-    //Mostra o valor das receitas do mês corrente
     public BigDecimal consultarValorReceitasMensal (){
         BigDecimal valorReceitas = getSaldo();
-        for (Receita r : getTitular().retornarReceitas()) {
+        for (Receita r : getTitular().getReceitas()) {
             if (r.getDataLancamento().getMonth() == (LocalDate.now().getMonth())) {
                 valorReceitas = valorReceitas.add(r.getValor());
             }
@@ -186,10 +157,9 @@ public class ContaBancaria implements Serializable {
         return valorReceitas;
     }
     
-    //Mostra o valor das despesas do mês corrente
     public BigDecimal consultarValorDespesasMensal (){
         BigDecimal valorDespesas = getSaldo();
-        for (Despesa r : getTitular().retornarDespesas()) {
+        for (Despesa r : getTitular().getDespesas()) {
             if (r.getDataLancamento().getMonth() == (LocalDate.now().getMonth())) {
                 valorDespesas = valorDespesas.add(r.getValor());
             }
@@ -197,24 +167,7 @@ public class ContaBancaria implements Serializable {
         return valorDespesas;
     }
 
-//    public void addHistoricoDeLancamentos(Lancamento lancamento) {
-//
-//        // TODO - Refactor this code
-//        if(lancamento instanceof Despesa) {
-//            this.historicoLancamentos.put(lancamento, Arrays.asList(getSaldo(), this.subtraiSaldo(lancamento.getValor())));
-//            return;
-//        }
-//        this.historicoLancamentos.put(lancamento, Arrays.asList(getSaldo(), this.somaSaldo(lancamento.getValor())));
-//    }
-
-    //Exibe o histórico de lançamentos
-    public void exibirHistoricoDeLancamentos() {
-        for (Map.Entry<Lancamento, List<BigDecimal>> entry : historicoLancamentos.entrySet()) {
-            System.out.println("Lançamento: " +
-                    entry.getKey().getClass().getSimpleName() + " - Valor: " +
-                    entry.getKey().getValor() + " - Data: " +
-                    entry.getKey().getDataLancamento() + " - Saldo Anterior: " +
-                    entry.getValue().get(0) + " - Saldo Atual: " + entry.getValue().get(1));
-        }
+    public boolean isDataMenorOuIgual(LocalDate data) {
+        return data.isBefore(LocalDate.now()) || data.isEqual(LocalDate.now());
     }
 }

@@ -9,22 +9,19 @@ import model.lancamentos.Despesa;
 import model.lancamentos.Lancamento;
 import model.lancamentos.Receita;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
-import model.interfaces.TipoDespesa;
 
 /**
  *
  * @author csoler
  */
 public class Pessoa implements Serializable {
-    @Serial
     private static final long serialVersionUID = 2L;
     private String nome;
-    private List<Receita> receitas = new ArrayList<>();
-    private List<Despesa> despesas = new ArrayList<>();
+    private final HashMap<Integer, Receita> receitas = new HashMap<>();
+    private final HashMap<Integer, Despesa> despesas = new HashMap<>();
     private ContaBancaria conta;
 
     public Pessoa(String nome) throws IllegalArgumentException{
@@ -42,18 +39,12 @@ public class Pessoa implements Serializable {
         this.nome = nome;
     }
 
-    public List<Receita> retornarReceitas() {
-//        if (receitas.isEmpty()) {
-//            throw new IllegalArgumentException("Nenhuma receita inserida!");
-//        }
-        return receitas;
+    public List<Receita> getReceitas() {
+        return receitas.values().stream().toList();
     }
 
-    public List<Despesa> retornarDespesas() {
-//        if(despesas.isEmpty()){
-//            throw new IllegalArgumentException("Nenhuma despesa inserida;");
-//        }
-        return despesas;
+    public List<Despesa> getDespesas() {
+        return despesas.values().stream().toList();
     }
 
     public ContaBancaria getConta() {
@@ -67,20 +58,20 @@ public class Pessoa implements Serializable {
         this.conta = conta;
     }
 
-    public void adicionarReceita(Receita receita){
+    public void adicionarReceita(Integer id, Receita receita){
         if(receita == null) {
             throw new IllegalArgumentException("Receita não pode ser nula");
         }
-        receitas.add(receita);
-//        conta.addHistoricoDeLancamentos(receita);
+        new HistoricoLancamento(receita, getConta().getSaldo());
+        receitas.put(id, receita);
     }
 
-    public void adicionarDespesa(Despesa despesa) {
+    public void adicionarDespesa(Integer id, Despesa despesa) {
         if(despesa == null) {
             throw new IllegalArgumentException("Despesa não pode ser nula");
         }
-        this.despesas.add(despesa);
-//        conta.addHistoricoDeLancamentos(despesa);
+        new HistoricoLancamento(despesa, getConta().consultaSaldoAtual());
+        this.despesas.put(id, despesa);
     }
     
     public void removerTodasReceitas(){
@@ -93,7 +84,7 @@ public class Pessoa implements Serializable {
     
     public List<Despesa> exibirDemonstrativoDespesasAtuais (){
         List<Despesa> sortedDespesas = new ArrayList<>();
-        for (Despesa r : retornarDespesas()) {
+        for (Despesa r : getDespesas()) {
             if (r.getDataLancamento().isBefore(LocalDate.now())
                     || r.getDataLancamento().isEqual(LocalDate.now())) {
                 sortedDespesas.add(r);
@@ -106,7 +97,7 @@ public class Pessoa implements Serializable {
     
     public List<Receita> exibirDemonstrativoReceitasAtuais() {
         List<Receita> sortedReceita = new ArrayList<>();
-            for (Receita r : retornarReceitas()) {
+            for (Receita r : getReceitas()) {
                 if (r.getDataLancamento().isBefore(LocalDate.now()) || r.getDataLancamento().isEqual(LocalDate.now())) {
                     sortedReceita.add(r);
                 }
@@ -117,7 +108,7 @@ public class Pessoa implements Serializable {
     
     public List<Receita> exibirDemonstrativoReceitasFuturas() {
         List<Receita> sortedReceita = new ArrayList<>();
-            for (Receita r : retornarReceitas()) {
+            for (Receita r : getReceitas()) {
                 if (r.getDataLancamento().isAfter(LocalDate.now())) {
                     sortedReceita.add(r);
                 }
@@ -128,7 +119,7 @@ public class Pessoa implements Serializable {
     
     public List<Despesa> exibirDemonstrativoDespesasFuturas() {
         List<Despesa> sortedDespesa = new ArrayList<>();
-            for (Despesa r : retornarDespesas()) {
+            for (Despesa r : getDespesas()) {
                 if (r.getDataLancamento().isAfter(LocalDate.now())) {
                     sortedDespesa.add(r);
                 }
@@ -136,18 +127,24 @@ public class Pessoa implements Serializable {
             sortedDespesa.sort(Comparator.comparing(Lancamento::getDataLancamento));
         return sortedDespesa;
     }
-    
-    public List<Lancamento> listaLancamentosPorData() {
-        List<Despesa> sortedDespesas = new ArrayList<>(despesas);
-        List<Receita> sortedReceitas = new ArrayList<>(receitas);
 
-        sortedDespesas.sort(Comparator.comparing(Lancamento::getDataLancamento));
-        sortedReceitas.sort(Comparator.comparing(Lancamento::getDataLancamento));
+    public void removerReceita(Integer id) {
+        if(id == null) {
+            throw new IllegalArgumentException("O ID não pode ser nulo");
+        }
+        if(!receitas.containsKey(id)) {
+            throw new IllegalArgumentException("Receita não encontrada");
+        }
+        receitas.remove(id);
+    }
 
-        List<Lancamento> sortedLancamentos = new ArrayList<>();
-        sortedLancamentos.addAll(sortedDespesas);
-        sortedLancamentos.addAll(sortedReceitas);
-
-        return sortedLancamentos;
+    public void removerDespesa(Integer id) {
+        if(id == null) {
+            throw new IllegalArgumentException("Despesa não pode ser nula");
+        }
+        if(!despesas.containsKey(id)) {
+            throw new IllegalArgumentException("Receita não encontrada");
+        }
+        despesas.remove(id);
     }
 }

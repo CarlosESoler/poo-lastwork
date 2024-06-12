@@ -247,6 +247,7 @@ public class AdicionarDespesaGUI extends javax.swing.JDialog {
                 tr = TipoDespesa.OUTRAS;
             }
 
+            // TODO - Refatorar isso aqui pra passar o ID
             Despesa adcDespesa = new Despesa(dataLancamento, tr, tfValorDespesa.getText());
             pessoaAdcDespesa.adicionarDespesa(adcDespesa);
         } catch (NumberFormatException ex) {

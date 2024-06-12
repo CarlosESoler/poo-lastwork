@@ -221,6 +221,7 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
 
             Receita adcReceita = new Receita(dataLancamento, tr, tfValorReceita.getText());
 
+            // TODO - Refatorar aqui pra adicionar um ID
             pessoaAdcReceita.adicionarReceita(adcReceita);
             limparCampos();
         } catch (NumberFormatException ex) {
