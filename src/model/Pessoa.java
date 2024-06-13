@@ -13,7 +13,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
-import model.interfaces.TipoDespesa;
 
 /**
  *
@@ -72,7 +71,7 @@ public class Pessoa implements Serializable {
             throw new IllegalArgumentException("Receita não pode ser nula");
         }
         receitas.add(receita);
-//        conta.addHistoricoDeLancamentos(receita);
+//        conta.salvarDados();
     }
 
     public void adicionarDespesa(Despesa despesa) {
@@ -80,7 +79,7 @@ public class Pessoa implements Serializable {
             throw new IllegalArgumentException("Despesa não pode ser nula");
         }
         this.despesas.add(despesa);
-//        conta.addHistoricoDeLancamentos(despesa);
+//        conta.salvarDados();
     }
     
     public void removerTodasReceitas(){
