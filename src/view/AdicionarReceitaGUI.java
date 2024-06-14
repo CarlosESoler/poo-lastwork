@@ -18,7 +18,9 @@ import model.lancamentos.Receita;
  * @author Gamer
  */
 public class AdicionarReceitaGUI extends javax.swing.JDialog {
+
     Pessoa pessoaAdcReceita;
+
     /**
      * Creates new form Teste
      */
@@ -51,6 +53,8 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
         btFecharAdicionarDepesa = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         dcDataReceita = new com.toedter.calendar.JDateChooser();
+        jPanel4 = new javax.swing.JPanel();
+        tfIdReceita = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -157,24 +161,44 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("ID da Receita"));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tfIdReceita)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tfIdReceita, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btAdicionarReceita)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btFecharAdicionarDepesa)))
-                        .addGap(223, 223, 223)))
+                        .addGap(223, 223, 223))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -186,6 +210,8 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -199,32 +225,35 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btAdicionarReceitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarReceitaActionPerformed
-
         try {
-            
-            if(dcDataReceita.getDate() == null){
+            if (tfIdReceita.getText().isEmpty()) {
+                throw new IllegalArgumentException("O campo ID da Receita deve ser preenchido!");
+            }
+
+            int id = Integer.parseInt(tfIdReceita.getText());
+
+            Date data = dcDataReceita.getDate();
+            if (data == null) {
                 throw new NullPointerException("O campo data deve ser preenchido!");
             }
-            Date data = dcDataReceita.getDate();
             LocalDate dataLancamento = data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
             TipoReceita tr = null;
             if (buttonGroup1.getSelection() == rbDecimoTerceiro.getModel()) {
                 tr = TipoReceita.DECIMO_TERCEIRO;
-            } else if(buttonGroup1.getSelection() == rbSalario.getModel()){
+            } else if (buttonGroup1.getSelection() == rbSalario.getModel()) {
                 tr = TipoReceita.SALARIO;
-            } else if(buttonGroup1.getSelection() == rbFerias.getModel()){
+            } else if (buttonGroup1.getSelection() == rbFerias.getModel()) {
                 tr = TipoReceita.FERIAS;
-            } else if (buttonGroup1.getSelection() == rbOutros.getModel()){
+            } else if (buttonGroup1.getSelection() == rbOutros.getModel()) {
                 tr = TipoReceita.OUTRAS;
             }
 
             Receita adcReceita = new Receita(dataLancamento, tr, tfValorReceita.getText());
-
-            pessoaAdcReceita.adicionarReceita(adcReceita);
+            pessoaAdcReceita.adicionarReceita(id, adcReceita);
             limparCampos();
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Valor da Despesa inválido!");
+            JOptionPane.showMessageDialog(this, "O valor do ID da Receita deve ser um número inteiro!");
         } catch (NullPointerException | IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         } catch (DateTimeParseException ex) {
@@ -274,12 +303,12 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
                 Pessoa pessoa = new Pessoa(args[0]);
                 PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
                 pessoaGUI.setVisible(true);
-                        
+
                 AdicionarReceitaGUI dialog = new AdicionarReceitaGUI(new javax.swing.JFrame(), true, pessoa);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
-                       
+
                         System.exit(0);
                     }
                 });
@@ -297,13 +326,15 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JRadioButton rbDecimoTerceiro;
     private javax.swing.JRadioButton rbFerias;
     private javax.swing.JRadioButton rbOutros;
     private javax.swing.JRadioButton rbSalario;
+    private javax.swing.JTextField tfIdReceita;
     private javax.swing.JTextField tfValorReceita;
     // End of variables declaration//GEN-END:variables
-    public void limparCampos(){
+    public void limparCampos() {
         dcDataReceita.setDate(null);
         tfValorReceita.setText("");
     }

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  *
@@ -19,7 +20,7 @@ public class Lancamento {
     private BigDecimal valor;
     private LocalDate dataLancamento;
 
-    public Lancamento(LocalDate dataLancamento, String valor) throws IllegalArgumentException, NumberFormatException{
+    public Lancamento(LocalDate dataLancamento, String valor) throws IllegalArgumentException {
         setDataLancamento(dataLancamento);
         setValor(valor);
     }
@@ -30,7 +31,6 @@ public class Lancamento {
 
     public void setDataLancamento(LocalDate dataLancamento) {
         this.dataLancamento = dataLancamento;
-
     }
 
     public BigDecimal getValor() {
@@ -39,7 +39,7 @@ public class Lancamento {
 
     public void setValor(String valor) {
         try {
-            if (valor.equals("")) {
+            if (valor.isEmpty()) {
                 throw new IllegalArgumentException("Valor não pode ser vazio ou nulo.");
             }
             BigDecimal valorConvertido = new BigDecimal(valor);

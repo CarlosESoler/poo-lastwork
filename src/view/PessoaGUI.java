@@ -720,7 +720,7 @@ public class PessoaGUI extends javax.swing.JFrame {
 
     private void btGerarDemReceitaAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemReceitaAtualActionPerformed
 
-        if(pessoa.retornarReceitas().isEmpty()){
+        if(pessoa.getReceitas().isEmpty()){
             JOptionPane.showMessageDialog(this, "Nenhuma receita inserida!");
         } else {
             VisDemonstrativoRecAtual vdra = new VisDemonstrativoRecAtual(this, true, pessoa);
@@ -729,7 +729,7 @@ public class PessoaGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btGerarDemReceitaAtualActionPerformed
 
     private void btGerarDemReceitaFuturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemReceitaFuturaActionPerformed
-        if(pessoa.retornarReceitas().isEmpty()){
+        if(pessoa.getReceitas().isEmpty()){
             JOptionPane.showMessageDialog(this, "Nenhuma despesa inserida!");
         } else {
             VisDemonstrativoRecFutura vdrf = new VisDemonstrativoRecFutura(this, true, pessoa);
@@ -738,7 +738,7 @@ public class PessoaGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btGerarDemReceitaFuturaActionPerformed
 
     private void btGerarDemDespesaAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemDespesaAtualActionPerformed
-        if(pessoa.retornarDespesas().isEmpty()){
+        if(pessoa.getDespesas().isEmpty()){
             JOptionPane.showMessageDialog(this, "Nenhuma despesa inserida!");
         } else {
             VisDemonstrativoDespAtual vdda = new VisDemonstrativoDespAtual(this, true, pessoa);
@@ -748,7 +748,7 @@ public class PessoaGUI extends javax.swing.JFrame {
 
     private void btGerarDemDespesaFuturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemDespesaFuturaActionPerformed
         
-        if(pessoa.retornarDespesas().isEmpty()){
+        if(pessoa.getDespesas().isEmpty()){
             JOptionPane.showMessageDialog(this, "Nenhuma despesa inserida!");
         } else {
             VisDemonstrativoDespFutura vddf = new VisDemonstrativoDespFutura(this, true, pessoa);
