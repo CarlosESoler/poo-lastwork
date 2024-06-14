@@ -1,5 +1,9 @@
 package view;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import model.Pessoa;
 import model.lancamentos.Despesa;
 
@@ -7,13 +11,14 @@ import model.lancamentos.Despesa;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-
 /**
  *
  * @author Gamer
  */
 public class VisDemonstrativoDespAtual extends javax.swing.JDialog {
-        private Pessoa pessoaMostraDemAtual;
+
+    private Pessoa pessoaMostraDemAtual;
+
     /**
      * Creates new form VisDemonstrativoDespAtual
      */
@@ -24,19 +29,29 @@ public class VisDemonstrativoDespAtual extends javax.swing.JDialog {
         pessoaMostraDemAtual = pessoa;
         exibirDemonstrativoDespAtual();
     }
-    
-     public void exibirDemonstrativoDespAtual() {
+
+    public void exibirDemonstrativoDespAtual() {
         StringBuilder conteudo = new StringBuilder();
-        for (Despesa rc : pessoaMostraDemAtual.exibirDemonstrativoDespesasAtuais()) {
+        List<Integer> idsDespesas = new ArrayList<>(pessoaMostraDemAtual.getReceitasMap().keySet());
+
+// Ordene as chaves
+        Collections.sort(idsDespesas);
+
+// Itere sobre as chaves ordenadas
+        for (Integer id : idsDespesas) {
+            Despesa rc = pessoaMostraDemAtual.getDespesasMap().get(id);
             conteudo.append("====================================\n");
-            conteudo.append("Data: ").append(rc.getDataLancamento())
-                    .append(" Tipo: ").append(rc.getTipoDespesa())
-                    .append(" Valor: ").append(rc.getValor())
-                    .append("\n====================================\n");
+            conteudo.append("ID: ").append(id).append("\n");
+            conteudo.append("Data: ").append(rc.getDataLancamento()).append("\n");
+            conteudo.append("Tipo: ").append(rc.getTipoDespesa()).append("\n");
+            conteudo.append("Valor: ").append(rc.getValor()).append("\n");
         }
-        tArea.setEditable(false);
+
+
         tArea.setText(conteudo.toString());
+        tArea.setEditable(false);
         tArea.setCaretPosition(0);
+    
     }
 
     /**
@@ -130,7 +145,7 @@ public class VisDemonstrativoDespAtual extends javax.swing.JDialog {
                     pessoa = new Pessoa(args[0]);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.err.println("Erro: Argumentos de linha de comando insuficientes.");
-                    return; 
+                    return;
                 }
 
                 PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);

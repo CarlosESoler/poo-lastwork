@@ -12,71 +12,82 @@ import model.lancamentos.Receita;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /**
  *
  * @author csoler
  */
-public class ContaBancaria implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class ContaBancaria  {
 
     private String numero;
     private BigDecimal saldo = BigDecimal.ZERO;
     private Pessoa titular;
+    private final Map<Lancamento, List<BigDecimal>> historicoLancamentos = new HashMap<>();
 
+    //Construtor: inicializa settando o número da conta bancária
     public ContaBancaria(String numero) {
         setNumero(numero);
     }
-    
+
     //Setter: define o número da conta bancária
     public void setNumero(String numero) {
-        if("".equals(numero) || numero.isBlank()) {
+        if ("".equals(numero) || numero.isBlank()) {
             throw new IllegalArgumentException("Número da conta não pode ser nulo ou vazio");
         }
         this.numero = numero;
     }
 
+    //Capta o número da conta bancária
     public String getNumero() {
         return numero;
     }
-    
-    
+
     public BigDecimal getSaldo() {
         return saldo;
     }
 
     private void setSaldo(BigDecimal saldo) {
-        if(saldo == null || saldo.compareTo(BigDecimal.ZERO) < 0) {
+        if (saldo == null || saldo.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Saldo não pode ser nulo ou negativo");
         }
         this.saldo = saldo;
     }
-    
+
+    //Getter: Capta o titular da conta
     public Pessoa getTitular() {
         return titular;
     }
     
+    //Setter: define o titular da conta
     public void setTitular(Pessoa titular) {
-        if(titular == null) {
+        if (titular == null) {
             throw new IllegalArgumentException("Titular da conta não pode ser nulo");
         }
         this.titular = titular;
     }
 
+    //Adiciona saldo à conta
     public BigDecimal somaSaldo(BigDecimal valor) {
-        if(valor == null || valor.compareTo(BigDecimal.ZERO) < 0) {
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Valor não pode ser nulo ou negativo");
         }
         return this.saldo = this.saldo.add(valor);
     }
     
+    //Subtrai saldo da conta
     public BigDecimal subtraiSaldo(BigDecimal valor) {
-        if(valor == null || valor.compareTo(BigDecimal.ZERO) < 0) {
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Valor não pode ser nulo ou negativo");
         }
         return this.saldo = this.saldo.subtract(valor);
     }
-    
+
+    //Mostra o valor do saldo até o momento
     public BigDecimal consultaSaldoAtual() {
         BigDecimal saldoAtual = getSaldo();
 
@@ -94,6 +105,7 @@ public class ContaBancaria implements Serializable {
         return saldoAtual;
     }
 
+    //Mostra o saldo geral (atual + futuro)
     public BigDecimal consultaSaldoIndependentePeriodo() {
         BigDecimal saldoAtual = getSaldo();
 
@@ -106,8 +118,10 @@ public class ContaBancaria implements Serializable {
         }
         return saldoAtual;
     }
-    
-    public BigDecimal consultarValorReceitasAtual (){
+
+    //Mostra o valor das receitas até o momento
+    public BigDecimal consultarValorReceitasAtual() {
+
         BigDecimal valorReceitas = getSaldo();
         for (Receita r : getTitular().getReceitas()) {
             if (isDataMenorOuIgual(r.getDataLancamento())) {
@@ -117,7 +131,8 @@ public class ContaBancaria implements Serializable {
         return valorReceitas;
     }
     
-    public BigDecimal consultarValorDespesasAtual (){
+    //Mostra o valor das despesas até o momento
+    public BigDecimal consultarValorDespesasAtual() {
         BigDecimal valorDespesas = getSaldo();
         for (Despesa d : getTitular().getDespesas()) {
             if (isDataMenorOuIgual(d.getDataLancamento())) {
@@ -127,7 +142,8 @@ public class ContaBancaria implements Serializable {
         return valorDespesas;
     }
     
-    public BigDecimal consultarValorReceitasFuturo (){
+    //Mostra o valor das receitas futuras
+    public BigDecimal consultarValorReceitasFuturo() {
         BigDecimal valorReceitas = getSaldo();
         for (Receita r : getTitular().getReceitas()) {
             if (r.getDataLancamento().isAfter(LocalDate.now())) {
@@ -136,8 +152,10 @@ public class ContaBancaria implements Serializable {
         }
         return valorReceitas;
     }
-   
-    public BigDecimal consultarValorDespesasFuturo (){
+
+    //Mostra o valor das despesas futuras
+    public BigDecimal consultarValorDespesasFuturo() {
+
         BigDecimal valorDespesas = getSaldo();
         for (Despesa r : getTitular().getDespesas()) {
             if (r.getDataLancamento().isAfter(LocalDate.now())) {
@@ -146,7 +164,7 @@ public class ContaBancaria implements Serializable {
         }
         return valorDespesas;
     }
-    
+
     public BigDecimal consultarValorReceitasMensal (){
         BigDecimal valorReceitas = getSaldo();
         for (Receita r : getTitular().getReceitas()) {
@@ -156,7 +174,7 @@ public class ContaBancaria implements Serializable {
         }
         return valorReceitas;
     }
-    
+
     public BigDecimal consultarValorDespesasMensal (){
         BigDecimal valorDespesas = getSaldo();
         for (Despesa r : getTitular().getDespesas()) {
@@ -169,5 +187,7 @@ public class ContaBancaria implements Serializable {
 
     public boolean isDataMenorOuIgual(LocalDate data) {
         return data.isBefore(LocalDate.now()) || data.isEqual(LocalDate.now());
+
     }
 }
+
