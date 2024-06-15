@@ -8,8 +8,10 @@ package model;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import model.lancamentos.Despesa;
 
 import model.lancamentos.Lancamento;
+import model.lancamentos.Receita;
 
 /**
  *
@@ -27,7 +29,12 @@ public class HistoricoLancamento {
     public HistoricoLancamento(Lancamento lancamento, BigDecimal saldoAnterior) {
         this.lancamento = lancamento;
         setSaldoAnterior(saldoAnterior);
-        setSaldoPosterior(lancamento.getValor().add(saldoAnterior));
+        if (this.lancamento instanceof Receita) {
+            setSaldoPosterior(getSaldoAnterior().add(lancamento.getValor()));
+        } else if (this.lancamento instanceof Despesa) {
+            setSaldoPosterior(getSaldoAnterior().subtract(lancamento.getValor()));
+        }
+
     }
 
     public Lancamento getLancamento() {

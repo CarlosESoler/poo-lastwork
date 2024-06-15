@@ -4,6 +4,11 @@
  */
 package view;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import model.Pessoa;
 import model.lancamentos.Receita;
 
@@ -12,7 +17,9 @@ import model.lancamentos.Receita;
  * @author Gamer
  */
 public class VisDemonstrativoRecFutura extends javax.swing.JDialog {
+
     private Pessoa pessoaMostraDemFuturo;
+
     /**
      * Creates new form VisDemonstrativoRecFutura
      */
@@ -23,19 +30,40 @@ public class VisDemonstrativoRecFutura extends javax.swing.JDialog {
         pessoaMostraDemFuturo = pessoa;
         exibirDemonstrativoRecFuturo();
     }
+
     public void exibirDemonstrativoRecFuturo() {
         StringBuilder conteudo = new StringBuilder();
-        for (Receita rc : pessoaMostraDemFuturo.exibirDemonstrativoReceitasFuturas()) {
+        List<Integer> idsReceitas = new ArrayList<>(pessoaMostraDemFuturo.exibirDemonstrativoReceitasFuturas().keySet());
+
+        Collections.sort(idsReceitas);
+
+        for (Integer id : idsReceitas) {
+            Receita rc = pessoaMostraDemFuturo.exibirDemonstrativoReceitasFuturas().get(id);
             conteudo.append("====================================\n");
-            conteudo.append("Data: ").append(rc.getDataLancamento())
-                    .append(" Tipo: ").append(rc.getTipoReceita())
-                    .append(" Valor: ").append(rc.getValor())
-                    .append("\n====================================\n");
+            conteudo.append("ID: ").append(id).append("\n");
+            conteudo.append("Data: ").append(rc.getDataLancamento()).append("\n");
+            conteudo.append("Tipo: ").append(rc.getTipoReceita()).append("\n");
+            conteudo.append("Valor: ").append(formatarNumero(rc.getValor())).append("\n");
         }
-        tArea.setEditable(false);
+
         tArea.setText(conteudo.toString());
+        tArea.setEditable(false);
         tArea.setCaretPosition(0);
     }
+    
+    private String formatarNumero(BigDecimal numero) {
+        // Verifica se o número é maior ou igual a 1.000.000.000
+        if (numero.abs().compareTo(new BigDecimal("1000000000")) >= 0) {
+            // Usa notação científica para números maiores ou iguais a 1.000.000.000
+            DecimalFormat dfScientific = new DecimalFormat("0.00E0");
+            return dfScientific.format(numero);
+        } else {
+            // Formata com até duas casas decimais para números menores que 1.000.000.000
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+            return df.format(numero);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -121,19 +149,19 @@ public class VisDemonstrativoRecFutura extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                
+
                 Pessoa pessoa;
 
                 try {
                     pessoa = new Pessoa(args[0]);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.err.println("Erro: Argumentos de linha de comando insuficientes.");
-                    return; 
+                    return;
                 }
 
                 PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
                 pessoaGUI.setVisible(true);
-                
+
                 VisDemonstrativoRecFutura dialog = new VisDemonstrativoRecFutura(new javax.swing.JFrame(), true, pessoa);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override

@@ -2,11 +2,18 @@ package view;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import model.HistoricoLancamento;
 import model.Pessoa;
 import model.lancamentos.Despesa;
+import model.lancamentos.Lancamento;
+import model.lancamentos.Receita;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -16,37 +23,51 @@ import model.lancamentos.Despesa;
  *
  * @author Gamer
  */
-public class VisDemonstrativoDespFutura extends javax.swing.JDialog {
+public class VisExtrato extends javax.swing.JDialog {
 
-    private Pessoa pessoaMostraDemFuturo;
+    private Pessoa pessoaExtrato;
 
     /**
      * Creates new form VisDemonstrativoDespFutura
      */
-    public VisDemonstrativoDespFutura(java.awt.Frame parent, boolean modal, Pessoa pessoa) {
+    public VisExtrato(java.awt.Frame parent, boolean modal, Pessoa pessoa) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        pessoaMostraDemFuturo = pessoa;
-        exibirDemonstrativoDespFutura();
+        pessoaExtrato = pessoa;
+        exibirExtrato();
     }
 
-    public void exibirDemonstrativoDespFutura() {
+    public void exibirExtrato() {
         StringBuilder conteudo = new StringBuilder();
-        List<Integer> idsDespesas = new ArrayList<>(pessoaMostraDemFuturo.exibirDemonstrativoDespesasFuturas().keySet());
+        Receita receita;
+        Despesa despesa;
 
-        Collections.sort(idsDespesas);
+        List<Integer> idsLancamentos = new ArrayList<>(pessoaExtrato.getHistorico().keySet());
 
-        for (Integer id : idsDespesas) {
-            Despesa rc = pessoaMostraDemFuturo.exibirDemonstrativoDespesasFuturas().get(id);
+        for (Integer id : idsLancamentos) {
+
+            HistoricoLancamento hl = pessoaExtrato.getHistorico().get(id);
+
             conteudo.append("====================================\n");
             conteudo.append("ID: ").append(id).append("\n");
-            conteudo.append("Data: ").append(rc.getDataLancamento()).append("\n");
-            conteudo.append("Tipo: ").append(rc.getTipoDespesa()).append("\n");
-            conteudo.append("Valor: ").append(formatarNumero(rc.getValor())).append("\n");
-        }   
-        tArea.setText(conteudo.toString());
+            conteudo.append("Data: ").append(hl.getLancamento().getDataLancamento()).append("\n");
+            if (hl.getLancamento() instanceof Receita) {
+                conteudo.append("Tipo de Lançamento: ").append("Receita").append("\n");
+                receita = (Receita) hl.getLancamento();
+                conteudo.append("Tipo de Receita: ").append(receita.getTipoReceita()).append("\n");
+                                conteudo.append("Valor: R$").append(formatarNumero(hl.getLancamento().getValor())).append("\n");
+            } else if (hl.getLancamento() instanceof Despesa) {
+                conteudo.append("Tipo de Lançamento: ").append("Despesa").append("\n");
+                despesa = (Despesa) hl.getLancamento();
+                conteudo.append("Tipo de Despesa: ").append(despesa.getTipoDespesa()).append("\n");
+                conteudo.append("Valor: -R$").append(formatarNumero(hl.getLancamento().getValor())).append("\n");
+            }
+            conteudo.append("Saldo Anterior: R$").append(formatarNumero(hl.getSaldoAnterior())).append("\n");
+            conteudo.append("Saldo Atual: R$").append(formatarNumero(hl.getSaldoPosterior())).append("\n");
+        }
         tArea.setEditable(false);
+        tArea.setText(conteudo.toString());
         tArea.setCaretPosition(0);
     }
     
@@ -79,7 +100,7 @@ public class VisDemonstrativoDespFutura extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel1.setText("Despesas Futuras");
+        jLabel1.setText("Extrato Geral");
 
         jScrollPane1.setName("spReceitasAtuais"); // NOI18N
 
@@ -95,7 +116,7 @@ public class VisDemonstrativoDespFutura extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addContainerGap(258, Short.MAX_VALUE))
+                .addContainerGap(294, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(9, 9, 9)
@@ -135,14 +156,15 @@ public class VisDemonstrativoDespFutura extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VisDemonstrativoDespFutura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VisExtrato.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VisDemonstrativoDespFutura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VisExtrato.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VisDemonstrativoDespFutura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VisExtrato.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VisDemonstrativoDespFutura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VisExtrato.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
@@ -161,7 +183,7 @@ public class VisDemonstrativoDespFutura extends javax.swing.JDialog {
                 PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
                 pessoaGUI.setVisible(true);
 
-                VisDemonstrativoDespFutura dialog = new VisDemonstrativoDespFutura(new javax.swing.JFrame(), true, pessoa);
+                VisExtrato dialog = new VisExtrato(new javax.swing.JFrame(), true, pessoa);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

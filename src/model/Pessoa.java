@@ -6,13 +6,10 @@
 package model;
 
 import model.lancamentos.Despesa;
-import model.lancamentos.Lancamento;
 import model.lancamentos.Receita;
-
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,12 +18,25 @@ import java.util.*;
 public class Pessoa {
 
     private String nome;
-    private final HashMap<Integer, Receita> receitas = new HashMap<>();
-    private final HashMap<Integer, Despesa> despesas = new HashMap<>();
+    private final HashMap<Integer, Receita> receitas;
+    private final HashMap<Integer, Despesa> despesas;
+    private final LinkedHashMap<Integer, HistoricoLancamento> historico;
     private ContaBancaria conta;
 
     public Pessoa(String nome) throws IllegalArgumentException {
-        setNome(nome);
+        historico = new LinkedHashMap<>();
+        despesas = new HashMap<>();
+        receitas = new HashMap<>();
+
+        if (nome.isBlank() || nome.isEmpty()) {
+            throw new IllegalArgumentException("Nome não pode ser nulo");
+        }
+        
+        if (nome.length() >= 15) {
+            throw new IllegalArgumentException("Nome não pode ter mais que 15 dígitos");
+        }
+        
+        this.nome = nome;
     }
 
     public String getNome() {
@@ -37,15 +47,11 @@ public class Pessoa {
         if (nome.isBlank()) {
             throw new IllegalArgumentException("Nome não pode ser nulo");
         }
-        this.nome = nome;
-    }
+        int resposta = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja alterar o nome da conta?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
 
-    public Set<Integer> getIdReceitas() {
-        return receitas.keySet();
-    }
-
-    public Set<Integer> getIdDespesas() {
-        return despesas.keySet();
+        if (resposta == JOptionPane.OK_OPTION) {
+            this.nome = nome;
+        }
     }
 
     public HashMap<Integer, Receita> getReceitasMap() {
@@ -64,6 +70,14 @@ public class Pessoa {
         return despesas.values().stream().toList();
     }
 
+    public LinkedHashMap<Integer, HistoricoLancamento> getHistorico() {
+        return historico;
+    }
+
+    public void adicionarHistoricoLancamento(Integer id, HistoricoLancamento historico) {
+        this.historico.put(id, historico);
+    }
+
     public ContaBancaria getConta() {
         return conta;
     }
@@ -77,36 +91,42 @@ public class Pessoa {
 
     public void adicionarReceita(Integer id, Receita receita) {
 
-        if (id == null) {
-            throw new IllegalArgumentException("O ID da receita não pode ser nulo");
-        }
         if (receita == null) {
-            throw new IllegalArgumentException("Receita não pode ser nula");
+            throw new IllegalArgumentException("Receita não pode ser nula!");
         }
+
+        if (id == null) {
+            throw new IllegalArgumentException("O ID da receita deve ser preenchido!");
+        }
+
         if (receitas.containsKey(id)) {
-            throw new IllegalArgumentException("Já existe uma receita com o mesmo ID");
+            throw new IllegalArgumentException("Já existe uma receita com o este ID!");
         }
 
-        new HistoricoLancamento(receita, getConta().getSaldo());
-        receitas.put(id, receita);
+        if (despesas.containsKey(id)) {
+            throw new IllegalArgumentException("ID inserida já associada a uma despesa!");
+        }
 
+        receitas.put(id, receita);
     }
 
     public void adicionarDespesa(Integer id, Despesa despesa) {
-        
+
         if (id == null) {
             throw new IllegalArgumentException("O ID da despesa não pode ser nulo");
         }
         if (despesa == null) {
             throw new IllegalArgumentException("Despesa não pode ser nula");
         }
-        if (receitas.containsKey(id)) {
+        if (despesas.containsKey(id)) {
             throw new IllegalArgumentException("Já existe uma despesa com o mesmo ID");
         }
-        
-        new HistoricoLancamento(despesa, getConta().consultaSaldoAtual());
-        this.despesas.put(id, despesa);
 
+        if (receitas.containsKey(id)) {
+            throw new IllegalArgumentException("ID inserida já associada a uma receita!");
+        }
+
+        this.despesas.put(id, despesa);
     }
 
     public void removerTodasReceitas() {
@@ -117,50 +137,122 @@ public class Pessoa {
         this.despesas.clear();
     }
 
-    public List<Despesa> exibirDemonstrativoDespesasAtuais() {
-        List<Despesa> sortedDespesas = new ArrayList<>();
-        for (Despesa r : getDespesas()) {
+    public void apagarHistorico() {
+        this.historico.clear();
+    }
+
+    public Map<Integer, Receita> exibirDemonstrativoReceitasAtuais() {
+        // Lista para armazenar os IDs ordenados
+        List<Integer> sortedIds = new ArrayList<>();
+
+        // Mapa para armazenar as receitas (supondo que receitas é o seu mapa original)
+        Map<Integer, Receita> receitas = getReceitasMap();
+
+        // Filtrar e ordenar os IDs
+        for (Map.Entry<Integer, Receita> entry : receitas.entrySet()) {
+            Integer id = entry.getKey();
+            Receita r = entry.getValue();
             if (r.getDataLancamento().isBefore(LocalDate.now())
                     || r.getDataLancamento().isEqual(LocalDate.now())) {
-                sortedDespesas.add(r);
+                sortedIds.add(id);
             }
         }
-        sortedDespesas.sort(Comparator.comparing(Lancamento::getDataLancamento));
+
+        // Ordenar os IDs
+        Collections.sort(sortedIds);
+
+        // Construir o mapa ordenado com base nos IDs ordenados
+        Map<Integer, Receita> sortedReceitas = new LinkedHashMap<>();
+        for (Integer id : sortedIds) {
+            sortedReceitas.put(id, receitas.get(id));
+        }
+
+        return sortedReceitas;
+    }
+
+    public Map<Integer, Receita> exibirDemonstrativoReceitasFuturas() {
+        // Lista para armazenar os IDs ordenados
+        List<Integer> sortedIds = new ArrayList<>();
+
+        // Mapa para armazenar as receitas (supondo que receitas é o seu mapa original)
+        Map<Integer, Receita> receitas = getReceitasMap();
+
+        // Filtrar e ordenar os IDs
+        for (Map.Entry<Integer, Receita> entry : receitas.entrySet()) {
+            Integer id = entry.getKey();
+            Receita r = entry.getValue();
+            if (r.getDataLancamento().isAfter(LocalDate.now())) {
+                sortedIds.add(id);
+            }
+        }
+
+        // Ordenar os IDs
+        Collections.sort(sortedIds);
+
+        // Construir o mapa ordenado com base nos IDs ordenados
+        Map<Integer, Receita> sortedReceitas = new LinkedHashMap<>();
+        for (Integer id : sortedIds) {
+            sortedReceitas.put(id, receitas.get(id));
+        }
+
+        return sortedReceitas;
+    }
+
+    public Map<Integer, Despesa> exibirDemonstrativoDespesasAtuais() {
+        // Lista para armazenar os IDs ordenados
+        List<Integer> sortedIds = new ArrayList<>();
+
+        // Mapa para armazenar as despesas
+        Map<Integer, Despesa> despesas = getDespesasMap(); // Suponha que despesas é o seu mapa original
+
+        // Filtrar e ordenar os IDs
+        for (Map.Entry<Integer, Despesa> entry : despesas.entrySet()) {
+            Integer id = entry.getKey();
+            Despesa d = entry.getValue();
+            if (d.getDataLancamento().isBefore(LocalDate.now())
+                    || d.getDataLancamento().isEqual(LocalDate.now())) {
+                sortedIds.add(id);
+            }
+        }
+
+        // Ordenar os IDs
+        Collections.sort(sortedIds);
+
+        // Construir o mapa ordenado com base nos IDs ordenados
+        Map<Integer, Despesa> sortedDespesas = new LinkedHashMap<>();
+        for (Integer id : sortedIds) {
+            sortedDespesas.put(id, despesas.get(id));
+        }
 
         return sortedDespesas;
     }
 
-    public List<Receita> exibirDemonstrativoReceitasAtuais() {
-        List<Receita> sortedReceita = new ArrayList<>();
-        for (Receita r : getReceitas()) {
-            if (r.getDataLancamento().isBefore(LocalDate.now()) || r.getDataLancamento().isEqual(LocalDate.now())) {
-                sortedReceita.add(r);
-            }
-        }
-        sortedReceita.sort(Comparator.comparing(Lancamento::getDataLancamento));
-        return sortedReceita;
-    }
+    public Map<Integer, Despesa> exibirDemonstrativoDespesasFuturas() {
+        // Lista para armazenar os IDs ordenados
+        List<Integer> sortedIds = new ArrayList<>();
 
-    public List<Receita> exibirDemonstrativoReceitasFuturas() {
-        List<Receita> sortedReceita = new ArrayList<>();
-        for (Receita r : getReceitas()) {
-            if (r.getDataLancamento().isAfter(LocalDate.now())) {
-                sortedReceita.add(r);
-            }
-        }
-        sortedReceita.sort(Comparator.comparing(Lancamento::getDataLancamento));
-        return sortedReceita;
-    }
+        // Mapa para armazenar as despesas
+        Map<Integer, Despesa> despesas = getDespesasMap(); // Suponha que despesas é o seu mapa original
 
-    public List<Despesa> exibirDemonstrativoDespesasFuturas() {
-        List<Despesa> sortedDespesa = new ArrayList<>();
-        for (Despesa r : getDespesas()) {
-            if (r.getDataLancamento().isAfter(LocalDate.now())) {
-                sortedDespesa.add(r);
+        // Filtrar e ordenar os IDs
+        for (Map.Entry<Integer, Despesa> entry : despesas.entrySet()) {
+            Integer id = entry.getKey();
+            Despesa d = entry.getValue();
+            if (d.getDataLancamento().isAfter(LocalDate.now())) {
+                sortedIds.add(id);
             }
         }
-        sortedDespesa.sort(Comparator.comparing(Lancamento::getDataLancamento));
-        return sortedDespesa;
+
+        // Ordenar os IDs
+        Collections.sort(sortedIds);
+
+        // Construir o mapa ordenado com base nos IDs ordenados
+        Map<Integer, Despesa> sortedDespesas = new LinkedHashMap<>();
+        for (Integer id : sortedIds) {
+            sortedDespesas.put(id, despesas.get(id));
+        }
+
+        return sortedDespesas;
     }
 
     public void removerReceita(Integer id) {
@@ -175,10 +267,10 @@ public class Pessoa {
 
     public void removerDespesa(Integer id) {
         if (id == null) {
-            throw new IllegalArgumentException("Despesa não pode ser nula");
+            throw new IllegalArgumentException("O ID não pode ser nulo");
         }
         if (!despesas.containsKey(id)) {
-            throw new IllegalArgumentException("Receita não encontrada");
+            throw new IllegalArgumentException("Despesa não encontrada");
         }
         despesas.remove(id);
     }

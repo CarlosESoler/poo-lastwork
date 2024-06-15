@@ -7,14 +7,17 @@ package view;
 import javax.swing.JOptionPane;
 import model.ContaBancaria;
 import model.Pessoa;
+import model.lancamentos.Receita;
 
 /**
  *
  * @author Gamer
  */
 public class GerenciarContaGUI extends javax.swing.JDialog {
+
     Pessoa gerenciarPessoa;
     ContaBancaria gerenciarConta;
+
     /**
      * Creates new form GerenciarContaGUI
      */
@@ -101,7 +104,7 @@ public class GerenciarContaGUI extends javax.swing.JDialog {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btResetarValores)
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(197, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -113,7 +116,7 @@ public class GerenciarContaGUI extends javax.swing.JDialog {
 
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Alterar Número da Conta"));
 
-        btAlterarNumeroConta.setText("Aletrar número");
+        btAlterarNumeroConta.setText("Alterar número");
         btAlterarNumeroConta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAlterarNumeroContaActionPerformed(evt);
@@ -127,7 +130,7 @@ public class GerenciarContaGUI extends javax.swing.JDialog {
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tfAlterarNumeroConta, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                    .addComponent(tfAlterarNumeroConta)
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addComponent(btAlterarNumeroConta)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -147,12 +150,12 @@ public class GerenciarContaGUI extends javax.swing.JDialog {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -186,36 +189,46 @@ public class GerenciarContaGUI extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btAlterarNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAlterarNomeActionPerformed
-        try {    
+        try {
             gerenciarPessoa.setNome(tfAlterarNome.getText());
             limparCampos();
-        } catch(IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
-            
+
     }//GEN-LAST:event_btAlterarNomeActionPerformed
 
     private void btAlterarNumeroContaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAlterarNumeroContaActionPerformed
         try {
             gerenciarConta.setNumero(tfAlterarNumeroConta.getText());
             limparCampos();
-        } catch(IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }//GEN-LAST:event_btAlterarNumeroContaActionPerformed
 
     private void btResetarValoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResetarValoresActionPerformed
-        gerenciarPessoa.removerTodasReceitas();
-        gerenciarPessoa.removerTodasDespesa();
-        limparCampos();
+
+        if (gerenciarConta.getTitular().getHistorico().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Não existem lançamentos associados a esta conta!");
+        } else {
+            int resposta = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja apagar todos os dados?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+
+            if (resposta == JOptionPane.OK_OPTION) {
+                gerenciarPessoa.removerTodasReceitas();
+                gerenciarPessoa.removerTodasDespesa();
+                gerenciarPessoa.apagarHistorico();
+                limparCampos();
+            }
+        }
     }//GEN-LAST:event_btResetarValoresActionPerformed
 
     /**
@@ -248,12 +261,12 @@ public class GerenciarContaGUI extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                
+
                 Pessoa pessoa = new Pessoa(args[0]);
                 ContaBancaria conta = new ContaBancaria(args[1]);
                 PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
                 pessoaGUI.setVisible(true);
-                
+
                 GerenciarContaGUI dialog = new GerenciarContaGUI(new javax.swing.JFrame(), true, pessoa, conta);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
@@ -270,25 +283,15 @@ public class GerenciarContaGUI extends javax.swing.JDialog {
     private javax.swing.JButton btAlterarNome;
     private javax.swing.JButton btAlterarNumeroConta;
     private javax.swing.JButton btResetarValores;
-    private com.toedter.calendar.JDateChooser dcDataDespesa;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JTextField tfAlterarNome;
     private javax.swing.JTextField tfAlterarNumeroConta;
-    private javax.swing.JTextField tfValorDespesa1;
-    private javax.swing.JTextField tfValorDespesa2;
-    private javax.swing.JTextField tfValorDespesa3;
-    private javax.swing.JTextField tfValorDespesa4;
     // End of variables declaration//GEN-END:variables
-    public void limparCampos(){
+    public void limparCampos() {
         tfAlterarNome.setText("");
         tfAlterarNumeroConta.setText("");
     }

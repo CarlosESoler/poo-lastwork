@@ -40,15 +40,15 @@ public class Lancamento {
     public void setValor(String valor) {
         try {
             if (valor.isEmpty()) {
-                throw new IllegalArgumentException("Valor não pode ser vazio ou nulo.");
+                throw new IllegalArgumentException("Valor do lançamento deve ser preenchido!");
             }
             BigDecimal valorConvertido = new BigDecimal(valor);
             if (valorConvertido.compareTo(BigDecimal.ZERO) < 0) {
-                throw new IllegalArgumentException("Valor inserido deve ser maior que zero!");
+                throw new IllegalArgumentException("Valor do lançamento inserido não pode ser negativo!");
             }
             this.valor = valorConvertido;
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Valor inserido deve ser um número válido.");
+            throw new NumberFormatException("Valor do lançamento inválido!");
         }
     }
 }

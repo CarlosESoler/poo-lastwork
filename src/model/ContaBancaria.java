@@ -8,38 +8,48 @@ package model;
 import model.lancamentos.Despesa;
 import model.lancamentos.Lancamento;
 import model.lancamentos.Receita;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author csoler
  */
-public class ContaBancaria  {
+public class ContaBancaria {
 
     private String numero;
     private BigDecimal saldo = BigDecimal.ZERO;
     private Pessoa titular;
-    private final Map<Lancamento, List<BigDecimal>> historicoLancamentos = new HashMap<>();
 
     //Construtor: inicializa settando o número da conta bancária
     public ContaBancaria(String numero) {
-        setNumero(numero);
+        
+        if (numero.isEmpty() || numero.isBlank()) {
+            throw new IllegalArgumentException("Número da conta não pode ser nulo ou vazio");
+        }
+        
+        if (numero.length() >= 10) {
+            throw new IllegalArgumentException("Número da conta não pode ter mais que 10 dígitos");
+        }
+        
+        this.numero = numero;
     }
 
     //Setter: define o número da conta bancária
     public void setNumero(String numero) {
-        if ("".equals(numero) || numero.isBlank()) {
-            throw new IllegalArgumentException("Número da conta não pode ser nulo ou vazio");
+        if (numero.isBlank()) {
+            throw new IllegalArgumentException("Número da conta deve ser preenchido!");
         }
-        this.numero = numero;
+        
+        int resposta = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja alterar o número da conta?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+
+        if (resposta == JOptionPane.OK_OPTION) {
+            this.numero = numero;
+        } 
     }
 
     //Capta o número da conta bancária
@@ -47,22 +57,11 @@ public class ContaBancaria  {
         return numero;
     }
 
-    public BigDecimal getSaldo() {
-        return saldo;
-    }
-
-    private void setSaldo(BigDecimal saldo) {
-        if (saldo == null || saldo.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Saldo não pode ser nulo ou negativo");
-        }
-        this.saldo = saldo;
-    }
-
     //Getter: Capta o titular da conta
     public Pessoa getTitular() {
         return titular;
     }
-    
+
     //Setter: define o titular da conta
     public void setTitular(Pessoa titular) {
         if (titular == null) {
@@ -72,24 +71,42 @@ public class ContaBancaria  {
     }
 
     //Adiciona saldo à conta
-    public BigDecimal somaSaldo(BigDecimal valor) {
-        if (valor == null || valor.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Valor não pode ser nulo ou negativo");
+    public void somaSaldo(String valor) {
+        try {
+            if (valor.isEmpty()) {
+                throw new IllegalArgumentException("Valor do lançamento deve ser preenchido!");
+            }
+            BigDecimal valorConvertido = new BigDecimal(valor);
+            if (valorConvertido.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Valor do lançamento inserido não pode ser negativo!");
+            }
+            this.saldo = this.saldo.add(valorConvertido);
+
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Valor do lançamento inválido!");
         }
-        return this.saldo = this.saldo.add(valor);
     }
-    
+
     //Subtrai saldo da conta
-    public BigDecimal subtraiSaldo(BigDecimal valor) {
-        if (valor == null || valor.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Valor não pode ser nulo ou negativo");
+    public void subtraiSaldo(String valor) {
+        try {
+            if (valor.isEmpty()) {
+                throw new IllegalArgumentException("Valor do lançamento deve ser preenchido!");
+            }
+            BigDecimal valorConvertido = new BigDecimal(valor);
+            if (valorConvertido.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Valor do lançamento inserido não pode ser negativo!");
+            }
+            this.saldo = this.saldo.subtract(valorConvertido);
+
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Valor do lançamento inválido!");
         }
-        return this.saldo = this.saldo.subtract(valor);
     }
 
     //Mostra o valor do saldo até o momento
     public BigDecimal consultaSaldoAtual() {
-        BigDecimal saldoAtual = getSaldo();
+        BigDecimal saldoAtual = BigDecimal.ZERO;
 
         for (Receita r : getTitular().getReceitas()) {
             if (isDataMenorOuIgual(r.getDataLancamento())) {
@@ -107,7 +124,7 @@ public class ContaBancaria  {
 
     //Mostra o saldo geral (atual + futuro)
     public BigDecimal consultaSaldoIndependentePeriodo() {
-        BigDecimal saldoAtual = getSaldo();
+        BigDecimal saldoAtual = BigDecimal.ZERO;
 
         for (Receita r : getTitular().getReceitas()) {
             saldoAtual = saldoAtual.add(r.getValor());
@@ -122,7 +139,7 @@ public class ContaBancaria  {
     //Mostra o valor das receitas até o momento
     public BigDecimal consultarValorReceitasAtual() {
 
-        BigDecimal valorReceitas = getSaldo();
+        BigDecimal valorReceitas = BigDecimal.ZERO;
         for (Receita r : getTitular().getReceitas()) {
             if (isDataMenorOuIgual(r.getDataLancamento())) {
                 valorReceitas = valorReceitas.add(r.getValor());
@@ -130,21 +147,21 @@ public class ContaBancaria  {
         }
         return valorReceitas;
     }
-    
+
     //Mostra o valor das despesas até o momento
     public BigDecimal consultarValorDespesasAtual() {
-        BigDecimal valorDespesas = getSaldo();
+        BigDecimal valorDespesas = BigDecimal.ZERO;
         for (Despesa d : getTitular().getDespesas()) {
             if (isDataMenorOuIgual(d.getDataLancamento())) {
-                valorDespesas = valorDespesas.add(d.getValor());
+                valorDespesas = valorDespesas.subtract(d.getValor());
             }
         }
         return valorDespesas;
     }
-    
+
     //Mostra o valor das receitas futuras
     public BigDecimal consultarValorReceitasFuturo() {
-        BigDecimal valorReceitas = getSaldo();
+        BigDecimal valorReceitas = BigDecimal.ZERO;
         for (Receita r : getTitular().getReceitas()) {
             if (r.getDataLancamento().isAfter(LocalDate.now())) {
                 valorReceitas = valorReceitas.add(r.getValor());
@@ -156,17 +173,17 @@ public class ContaBancaria  {
     //Mostra o valor das despesas futuras
     public BigDecimal consultarValorDespesasFuturo() {
 
-        BigDecimal valorDespesas = getSaldo();
+        BigDecimal valorDespesas = BigDecimal.ZERO;
         for (Despesa r : getTitular().getDespesas()) {
             if (r.getDataLancamento().isAfter(LocalDate.now())) {
-                valorDespesas = valorDespesas.add(r.getValor());
+                valorDespesas = valorDespesas.subtract(r.getValor());
             }
         }
         return valorDespesas;
     }
 
-    public BigDecimal consultarValorReceitasMensal (){
-        BigDecimal valorReceitas = getSaldo();
+    public BigDecimal consultarValorReceitasMensal() {
+        BigDecimal valorReceitas = BigDecimal.ZERO;
         for (Receita r : getTitular().getReceitas()) {
             if (r.getDataLancamento().getMonth() == (LocalDate.now().getMonth())) {
                 valorReceitas = valorReceitas.add(r.getValor());
@@ -175,11 +192,11 @@ public class ContaBancaria  {
         return valorReceitas;
     }
 
-    public BigDecimal consultarValorDespesasMensal (){
-        BigDecimal valorDespesas = getSaldo();
+    public BigDecimal consultarValorDespesasMensal() {
+        BigDecimal valorDespesas = BigDecimal.ZERO;
         for (Despesa r : getTitular().getDespesas()) {
             if (r.getDataLancamento().getMonth() == (LocalDate.now().getMonth())) {
-                valorDespesas = valorDespesas.add(r.getValor());
+                valorDespesas = valorDespesas.subtract(r.getValor());
             }
         }
         return valorDespesas;
@@ -190,4 +207,3 @@ public class ContaBancaria  {
 
     }
 }
-
