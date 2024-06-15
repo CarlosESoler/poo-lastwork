@@ -13,6 +13,7 @@ import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
+import model.HistoricoLancamento;
 import model.Pessoa;
 import model.interfaces.TipoDespesa;
 import model.lancamentos.Despesa;
@@ -22,6 +23,7 @@ import model.lancamentos.Despesa;
  * @author Gamer
  */
 public class AdicionarDespesaGUI extends javax.swing.JDialog {
+
     Pessoa pessoaAdcDespesa;
 
     public AdicionarDespesaGUI(java.awt.Frame parent, boolean modal, Pessoa pessoa) {
@@ -30,6 +32,7 @@ public class AdicionarDespesaGUI extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         pessoaAdcDespesa = pessoa;
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -227,14 +230,14 @@ public class AdicionarDespesaGUI extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdicionarDespesa, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btFecharAdicionarDespesa, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -247,41 +250,62 @@ public class AdicionarDespesaGUI extends javax.swing.JDialog {
     private void btAdicionarDespesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarDespesaActionPerformed
 
         try {
-            
-            if(dcDataDespesa.getDate() == null){
-                throw new NullPointerException("O campo data deve ser preenchido!");
+
+            if (tfIdDespesa.getText().isEmpty()) {
+                throw new IllegalArgumentException("O campo ID da Despesa deve ser preenchido!");
             }
+
+            int id = 0;
+
+            try {
+                id = Integer.parseInt(tfIdDespesa.getText());
+            } catch (NumberFormatException ex) {
+                throw new NumberFormatException("ID inserido não é um número inteiro!");
+            }
+
             Date data = dcDataDespesa.getDate();
+
+            if (data == null) {
+                throw new NullPointerException("Insira uma data válida no formato DD/MM/AAAA!");
+            }
+
             LocalDate dataLancamento = data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            if (buttonGroup1.getSelection() == null) {
+                throw new NullPointerException("Selecione a categoria da despesas!");
+            }
 
             TipoDespesa tr = null;
             if (buttonGroup1.getSelection() == rbEntretenimento.getModel()) {
                 tr = TipoDespesa.ENTRETENIMENTO;
-            } else if(buttonGroup1.getSelection() == rbAlimentacao.getModel()){
+            } else if (buttonGroup1.getSelection() == rbAlimentacao.getModel()) {
                 tr = TipoDespesa.ALIMENTACAO;
-            }  else if (buttonGroup1.getSelection() == rbResidencia.getModel()){
+            } else if (buttonGroup1.getSelection() == rbResidencia.getModel()) {
                 tr = TipoDespesa.RESIDENCIA;
-            } else if (buttonGroup1.getSelection() == rbTransporte.getModel()){
+            } else if (buttonGroup1.getSelection() == rbTransporte.getModel()) {
                 tr = TipoDespesa.TRANSPORTE;
-            } else if(buttonGroup1.getSelection() == rbEducacao.getModel()){
+            } else if (buttonGroup1.getSelection() == rbEducacao.getModel()) {
                 tr = TipoDespesa.EDUCACAO;
-            } else if (buttonGroup1.getSelection() == rbSaude.getModel()){
+            } else if (buttonGroup1.getSelection() == rbSaude.getModel()) {
                 tr = TipoDespesa.SAUDE;
-            } else if (buttonGroup1.getSelection() == rbOutros.getModel()){
+            } else if (buttonGroup1.getSelection() == rbOutros.getModel()) {
                 tr = TipoDespesa.OUTRAS;
             }
-            int id = Integer.parseInt(tfIdDespesa.getText());
-            // TODO - Refatorar isso aqui pra passar o ID
+
             Despesa adcDespesa = new Despesa(dataLancamento, tr, tfValorDespesa.getText());
+
+            HistoricoLancamento historico = new HistoricoLancamento(adcDespesa, pessoaAdcDespesa.getConta().consultaSaldoIndependentePeriodo());
+            pessoaAdcDespesa.getConta().subtraiSaldo(tfValorDespesa.getText());
             pessoaAdcDespesa.adicionarDespesa(id, adcDespesa);
+            pessoaAdcDespesa.adicionarHistoricoLancamento(id, historico);
+            limparCampos();
+
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Valor da Despesa inválido!");
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         } catch (NullPointerException | IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(this, "Insira uma data válida!");
-        } finally {
-            limparCampos();
         }
     }//GEN-LAST:event_btAdicionarDespesaActionPerformed
 
@@ -329,12 +353,12 @@ public class AdicionarDespesaGUI extends javax.swing.JDialog {
                 Pessoa pessoa = new Pessoa(args[0]);
                 PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
                 pessoaGUI.setVisible(true);
-                        
+
                 AdicionarDespesaGUI dialog = new AdicionarDespesaGUI(new javax.swing.JFrame(), true, pessoa);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
-                       
+
                         System.exit(0);
                     }
                 });
@@ -362,10 +386,11 @@ public class AdicionarDespesaGUI extends javax.swing.JDialog {
     private javax.swing.JTextField tfIdDespesa;
     private javax.swing.JTextField tfValorDespesa;
     // End of variables declaration//GEN-END:variables
-    public void limparCampos(){
-        tfValorDespesa.setText("");
+    public void limparCampos() {
+        tfIdDespesa.setText("");
         dcDataDespesa.setDate(null);
-        
+        buttonGroup1.clearSelection();
+        tfValorDespesa.setText("");
     }
 
 }

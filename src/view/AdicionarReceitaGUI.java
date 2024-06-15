@@ -4,11 +4,13 @@
  */
 package view;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import javax.swing.JOptionPane;
+import model.HistoricoLancamento;
 import model.Pessoa;
 import model.interfaces.TipoReceita;
 import model.lancamentos.Receita;
@@ -190,15 +192,15 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btAdicionarReceita)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btFecharAdicionarDepesa)))
-                        .addGap(223, 223, 223))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 229, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -207,18 +209,18 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdicionarReceita, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btFecharAdicionarDepesa, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -226,17 +228,30 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
 
     private void btAdicionarReceitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarReceitaActionPerformed
         try {
+
             if (tfIdReceita.getText().isEmpty()) {
                 throw new IllegalArgumentException("O campo ID da Receita deve ser preenchido!");
             }
 
-            int id = Integer.parseInt(tfIdReceita.getText());
+            int id = 0;
+
+            try {
+                id = Integer.parseInt(tfIdReceita.getText());
+            } catch (NumberFormatException ex) {
+                throw new NumberFormatException("ID inserido não é um número ");
+            }
 
             Date data = dcDataReceita.getDate();
+
             if (data == null) {
-                throw new NullPointerException("O campo data deve ser preenchido!");
+                throw new NullPointerException("Insira uma data válida no formato DD/MM/AAAA!");
             }
+
             LocalDate dataLancamento = data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            if (buttonGroup1.getSelection() == null) {
+                throw new NullPointerException("Selecione a categoria da receita!");
+            }
 
             TipoReceita tr = null;
             if (buttonGroup1.getSelection() == rbDecimoTerceiro.getModel()) {
@@ -250,10 +265,16 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
             }
 
             Receita adcReceita = new Receita(dataLancamento, tr, tfValorReceita.getText());
+
+            HistoricoLancamento historico = new HistoricoLancamento(adcReceita, pessoaAdcReceita.getConta().consultaSaldoIndependentePeriodo());
+            pessoaAdcReceita.getConta().somaSaldo(tfValorReceita.getText());
             pessoaAdcReceita.adicionarReceita(id, adcReceita);
+
+            pessoaAdcReceita.adicionarHistoricoLancamento(id, historico);
             limparCampos();
+
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "O valor do ID da Receita deve ser um número inteiro!");
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         } catch (NullPointerException | IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         } catch (DateTimeParseException ex) {
@@ -335,7 +356,9 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
     private javax.swing.JTextField tfValorReceita;
     // End of variables declaration//GEN-END:variables
     public void limparCampos() {
+        tfIdReceita.setText("");
         dcDataReceita.setDate(null);
+        buttonGroup1.clearSelection();
         tfValorReceita.setText("");
     }
 

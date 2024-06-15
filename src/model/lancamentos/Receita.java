@@ -28,7 +28,7 @@ public class Receita extends Lancamento {
 
     public void setTipoReceita(TipoReceita tipoReceita) {
         if (tipoReceita == null) {
-            throw new NullPointerException("O tipo de receita não pode ser nulo.");
+            throw new NullPointerException("O tipo de receita não pode ser nulo!");
         }
         this.tipoReceita = tipoReceita;
     }

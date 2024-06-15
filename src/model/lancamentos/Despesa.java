@@ -30,7 +30,7 @@ public class Despesa extends Lancamento {
 
     public void setTipoDespesa(TipoDespesa tipoDespesa) {
         if(tipoDespesa == null) {
-            throw new IllegalArgumentException("Tipo de despesa não pode ser nulo");
+            throw new IllegalArgumentException("Tipo de despesa não pode ser nulo!");
         }
         this.tipoDespesa = tipoDespesa;
     }

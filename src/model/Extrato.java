@@ -1,3 +1,5 @@
+package model;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -6,6 +8,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.swing.JOptionPane;
 import model.Pessoa;
 import model.interfaces.TipoDespesa;
@@ -14,39 +19,45 @@ import model.lancamentos.Despesa;
 import model.lancamentos.Receita;
 
 public class Extrato {
+
     private Pessoa titular;
+    private String arquivoCSV;
+    private File arquivo;
 
     public Extrato(Pessoa titular) {
         this.titular = titular;
+        arquivoCSV = "lancamentos.csv";
+        arquivo = new File(arquivoCSV);
     }
 
+    public File getArquivo() {
+        return arquivo;
+    }
+    
     public void apagarArquivo() {
-        String arquivoCSV = "lancamentos.csv";
-        File arquivo = new File(arquivoCSV);
-        if (arquivo.exists()) {
-            if (arquivo.delete()) {
-                JOptionPane.showMessageDialog(null, "Arquivo apagado com sucesso!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, "Falha ao apagar o arquivo CSV!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
-            }
+        if (this.arquivo.delete()) {
+            JOptionPane.showMessageDialog(null, "Arquivo apagado com sucesso!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, "O arquivo CSV não existe!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Falha ao apagar o arquivo CSV!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
+
     }
 
-    // Métodos para carregar e salvar dados (implementação depende da forma de persistência)
     public void carregarDados() {
-        String arquivoCSV = "lancamentos.csv";
+
         String separadorCSV = ",";
 
         BufferedReader br = null;
         try {
+
             br = new BufferedReader(new FileReader(arquivoCSV));
             String linha;
+            br.readLine(); // Ignora a primeira linha (cabeçalho)
+
             while ((linha = br.readLine()) != null) {
                 String[] campos = linha.split(separadorCSV);
 
-                if (campos.length >= 4) {
+                if (campos.length >= 5) {
                     String valor = campos[0];
 
                     DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -54,18 +65,31 @@ public class Extrato {
 
                     String categoria = campos[2];
                     String tipo = campos[3];
+                    int id = Integer.parseInt(campos[4]);
 
                     if (tipo.equalsIgnoreCase("Receita")) {
                         TipoReceita tpReceita = TipoReceita.valueOf(categoria.toUpperCase());
-                        titular.adicionarReceita(Integer.parseInt(campos[4]), new Receita(localDate, tpReceita, valor));
+                        Receita adcReceita = new Receita(localDate, tpReceita, valor);
+                        titular.adicionarReceita(id, adcReceita);
+
+                        HistoricoLancamento historico = new HistoricoLancamento(adcReceita, titular.getConta().consultaSaldoIndependentePeriodo());
+                        titular.adicionarHistoricoLancamento(id, historico);
                     } else if (tipo.equalsIgnoreCase("Despesa")) {
                         TipoDespesa tpDespesa = TipoDespesa.valueOf(categoria.toUpperCase());
-                        titular.adicionarDespesa(Integer.parseInt(campos[4]), new Despesa(localDate, tpDespesa, valor));
+                        Despesa adcDespesa = new Despesa(localDate, tpDespesa, valor);
+                        titular.adicionarDespesa(id, adcDespesa);
+
+                        HistoricoLancamento historico = new HistoricoLancamento(adcDespesa, titular.getConta().consultaSaldoIndependentePeriodo());
+                        titular.adicionarHistoricoLancamento(id, historico);
                     }
                 }
             }
-        } catch (IOException e) {
-            System.err.println("Erro ao carregar dados do arquivo CSV: " + e.getMessage());
+
+            JOptionPane.showMessageDialog(null, "Arquivo carregado com sucesso!");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao carregar dados do arquivo CSV: " + ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(null, "Existem lançamentos na plataforma com IDs duplicados em relação aos IDs contidos no arquivo. Recomenda-se remover os lançamentos duplicados na plataforma ou alterar os IDs no documento!");
         } finally {
             if (br != null) {
                 try {
@@ -84,25 +108,36 @@ public class Extrato {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(new FileWriter(arquivoCSV));
-            for (Receita receita : titular.getReceitas()) {
-                writer.println(String.format("%s,%s,%s,%s,%d",
-                        receita.getValor(),
-                        receita.getDataLancamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                        receita.getTipoReceita(),
-                        "Receita",
-                        titular.getIdReceitas()));
+
+            // Escreve o cabeçalho
+            writer.println("\"Valor\",\"Data\",\"Categoria\",\"Tipo\",\"ID\"");
+
+            List<Integer> idsDespesas = new ArrayList<>(titular.getDespesasMap().keySet());
+            Collections.sort(idsDespesas);
+            List<Integer> idsReceitas = new ArrayList<>(titular.getReceitasMap().keySet());
+            Collections.sort(idsReceitas);
+
+            // Escreve as receitas
+            for (Integer id : idsReceitas) {
+                Receita rc = titular.getReceitasMap().get(id);
+                writer.println(String.format("%s,%s,%s,Receita,%d",
+                        rc.getValor(),
+                        rc.getDataLancamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        rc.getTipoReceita(),
+                        id));
             }
 
-            for (Despesa despesa : titular.getDespesas()) {
-                writer.println(String.format("%s,%s,%s,%s",
-                        despesa.getValor(),
-                        despesa.getDataLancamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                        despesa.getTipoDespesa(),
-                        "Despesa",
-                        titular.getIdDespesas()));
+            // Escreve as despesas
+            for (Integer id : idsDespesas) {
+                Despesa dc = titular.getDespesasMap().get(id);
+                writer.println(String.format("%s,%s,%s,Despesa,%d",
+                        dc.getValor(),
+                        dc.getDataLancamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        dc.getTipoDespesa(),
+                        id));
             }
         } catch (IOException e) {
-            System.err.println("Erro ao salvar dados no arquivo CSV: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Erro ao salvar dados no arquivo CSV");
         } finally {
             if (writer != null) {
                 writer.close();

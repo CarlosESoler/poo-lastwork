@@ -1,5 +1,7 @@
 package view;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,26 +34,34 @@ public class VisDemonstrativoDespAtual extends javax.swing.JDialog {
 
     public void exibirDemonstrativoDespAtual() {
         StringBuilder conteudo = new StringBuilder();
-        List<Integer> idsDespesas = new ArrayList<>(pessoaMostraDemAtual.getReceitasMap().keySet());
+        List<Integer> idsDespesas = new ArrayList<>(pessoaMostraDemAtual.exibirDemonstrativoDespesasAtuais().keySet());
 
-// Ordene as chaves
         Collections.sort(idsDespesas);
 
-// Itere sobre as chaves ordenadas
         for (Integer id : idsDespesas) {
-            Despesa rc = pessoaMostraDemAtual.getDespesasMap().get(id);
+            Despesa rc = pessoaMostraDemAtual.exibirDemonstrativoDespesasAtuais().get(id);
             conteudo.append("====================================\n");
             conteudo.append("ID: ").append(id).append("\n");
             conteudo.append("Data: ").append(rc.getDataLancamento()).append("\n");
             conteudo.append("Tipo: ").append(rc.getTipoDespesa()).append("\n");
-            conteudo.append("Valor: ").append(rc.getValor()).append("\n");
+            conteudo.append("Valor: ").append(formatarNumero(rc.getValor())).append("\n");
         }
-
-
         tArea.setText(conteudo.toString());
         tArea.setEditable(false);
         tArea.setCaretPosition(0);
+    }
     
+    private String formatarNumero(BigDecimal numero) {
+        // Verifica se o número é maior ou igual a 1.000.000.000
+        if (numero.abs().compareTo(new BigDecimal("1000000000")) >= 0) {
+            // Usa notação científica para números maiores ou iguais a 1.000.000.000
+            DecimalFormat dfScientific = new DecimalFormat("0.00E0");
+            return dfScientific.format(numero);
+        } else {
+            // Formata com até duas casas decimais para números menores que 1.000.000.000
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+            return df.format(numero);
+        }
     }
 
     /**

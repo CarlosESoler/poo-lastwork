@@ -4,8 +4,11 @@
  */
 package view;
 
+import model.Extrato;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalTime;
 import javax.swing.JOptionPane;
 import model.ContaBancaria;
@@ -16,59 +19,78 @@ import model.Pessoa;
  * @author Gamer
  */
 public class PessoaGUI extends javax.swing.JFrame {
+
     Pessoa pessoa;
     ContaBancaria conta;
+    Extrato extrato;
+
     public PessoaGUI(String nome, String numeroConta) {
         initComponents();
         setLocationRelativeTo(null);
         pessoa = new Pessoa(nome);
         conta = new ContaBancaria(numeroConta);
+        extrato = new Extrato(pessoa);
+
         inicializarContexto();
     }
-    
-    public void inicializarContexto(){
+
+    public void inicializarContexto() {
         pessoa.setConta(conta);
         conta.setTitular(pessoa);
         saudacao();
     }
-    public void saudacao(){
-        
-        Toolkit kit = Toolkit.getDefaultToolkit();  
-        Dimension tamTela = kit.getScreenSize();  
+
+    public void saudacao() {
+
+        Toolkit kit = Toolkit.getDefaultToolkit();
+        Dimension tamTela = kit.getScreenSize();
 
         //Pega largura e altura da tela 
-        double larg = (tamTela.width * 0.65);  
-        double alt = (tamTela.height * 0.75);   
- 
-        setSize((int)larg,(int)alt);
-        
+        double larg = (tamTela.width * 0.75);
+        double alt = (tamTela.height * 0.75);
+
+        setSize((int) larg, (int) alt);
+
         LocalTime horaAtual = LocalTime.now();
-        
-        LocalTime horaInicioDia = LocalTime.of(23,59,59);
-        LocalTime horaMeioDia = LocalTime.of(11,59,59);
-        LocalTime horaInicioNoite = LocalTime.of(17,59,59);
-        if(horaAtual.isBefore(horaMeioDia)){
+
+        LocalTime horaInicioDia = LocalTime.of(23, 59, 59);
+        LocalTime horaMeioDia = LocalTime.of(11, 59, 59);
+        LocalTime horaInicioNoite = LocalTime.of(17, 59, 59);
+        if (horaAtual.isBefore(horaMeioDia)) {
             lbSaudacao.setText("Bom dia,");
-        } else if (horaAtual.isAfter(horaMeioDia) && horaAtual.isBefore(horaInicioNoite)){
+        } else if (horaAtual.isAfter(horaMeioDia) && horaAtual.isBefore(horaInicioNoite)) {
             lbSaudacao.setText("Boa tarde,");
-        } else if (horaAtual.isAfter(horaInicioNoite) && horaAtual.isBefore(horaInicioDia)){
+        } else if (horaAtual.isAfter(horaInicioNoite) && horaAtual.isBefore(horaInicioDia)) {
             lbSaudacao.setText("Boa noite,");
         }
         alterarTextos();
-   }
-    
-   public void alterarTextos(){
-        lbNomeUsuario.setText(pessoa.getNome());
-        lbNumeroContaBancaria.setText(conta.getNumero());
-        lbSaldoContaBancariaAtual.setText(conta.consultaSaldoAtual().toString());
-        lbValorSaldoGeral.setText(conta.consultaSaldoIndependentePeriodo().toString());
-        lbValorDepesasAtuais.setText(conta.consultarValorDespesasAtual().toString());
-        lbValorReceitasAtuais.setText(conta.consultarValorReceitasAtual().toString());
-        lbValorDepesasFuturas.setText(conta.consultarValorDespesasFuturo().toString());
-        lbValorReceitasFuturas.setText(conta.consultarValorReceitasFuturo().toString());
-        lbDespesaMensal.setText(conta.consultarValorDespesasMensal().toString());
-        lbReceitaMensal.setText(conta.consultarValorReceitasMensal().toString());
-   }
+    }
+
+    public void alterarTextos() {
+        lbNomeUsuario.setText(pessoa.getNome().trim());
+        lbNumeroContaBancaria.setText(conta.getNumero().trim());
+        lbSaldoContaBancariaAtual.setText("R$" + formatarNumero(conta.consultaSaldoAtual()));
+        lbValorSaldoGeral.setText("R$" + formatarNumero(conta.consultaSaldoIndependentePeriodo()));
+        lbValorDepesasAtuais.setText("R$" + formatarNumero(conta.consultarValorDespesasAtual()));
+        lbValorReceitasAtuais.setText("R$" + formatarNumero(conta.consultarValorReceitasAtual()));
+        lbValorDepesasFuturas.setText("R$" + formatarNumero(conta.consultarValorDespesasFuturo()));
+        lbValorReceitasFuturas.setText("R$" + formatarNumero(conta.consultarValorReceitasFuturo()));
+        lbDespesaMensal.setText("R$" + formatarNumero(conta.consultarValorDespesasMensal()));
+        lbReceitaMensal.setText("R$" + formatarNumero(conta.consultarValorReceitasMensal()));
+    }
+
+    private String formatarNumero(BigDecimal numero) {
+        // Verifica se o número é maior ou igual a 1.000.000.000
+        if (numero.abs().compareTo(new BigDecimal("1000000000")) >= 0) {
+            // Usa notação científica para números maiores ou iguais a 1.000.000.000
+            DecimalFormat dfScientific = new DecimalFormat("0.00E0");
+            return dfScientific.format(numero);
+        } else {
+            // Formata com até duas casas decimais para números menores que 1.000.000.000
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+            return df.format(numero);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -86,50 +108,44 @@ public class PessoaGUI extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         ttlReceitaMensal = new javax.swing.JLabel();
         ttlDespesaMensal = new javax.swing.JLabel();
-        lbValorReceitaMensal2 = new javax.swing.JLabel();
         lbReceitaMensal = new javax.swing.JLabel();
-        lbValorReceitaMensal3 = new javax.swing.JLabel();
         lbDespesaMensal = new javax.swing.JLabel();
-        btAdicionarReceita = new javax.swing.JButton();
-        btAdicionarDespesa = new javax.swing.JButton();
-        btRemoverReceita = new javax.swing.JButton();
-        btRemoverReceita1 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         lbReceitaMensal1 = new javax.swing.JLabel();
-        lbValorReceitaMensal1 = new javax.swing.JLabel();
         btGerenciarConta = new javax.swing.JButton();
-        lbReceitaMensal2 = new javax.swing.JLabel();
         lbNumeroContaBancaria = new javax.swing.JLabel();
         lbSaldoContaBancariaAtual = new javax.swing.JLabel();
+        lbReceitaMensal10 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         lbReceitaMensal4 = new javax.swing.JLabel();
         btGerarDemReceitaAtual = new javax.swing.JButton();
-        lbReceitaMensal15 = new javax.swing.JLabel();
         lbValorReceitasAtuais = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         lbReceitaMensal3 = new javax.swing.JLabel();
         btGerarDemDespesaAtual = new javax.swing.JButton();
         lbValorDepesasAtuais = new javax.swing.JLabel();
-        lbReceitaMensal18 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         lbReceitaMensal6 = new javax.swing.JLabel();
-        lbReceitaMensal14 = new javax.swing.JLabel();
         lbValorSaldoGeral = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         lbReceitaMensal7 = new javax.swing.JLabel();
         btGerarDemReceitaFutura = new javax.swing.JButton();
         lbValorReceitasFuturas = new javax.swing.JLabel();
-        lbReceitaMensal16 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         lbReceitaMensal8 = new javax.swing.JLabel();
-        btGerarDemDespesaFutura = new javax.swing.JButton();
         lbValorDepesasFuturas = new javax.swing.JLabel();
-        lbReceitaMensal17 = new javax.swing.JLabel();
+        btGerarDemDespesaFutura = new javax.swing.JButton();
         jPanel10 = new javax.swing.JPanel();
         btVisualizarRelatorioGeral = new javax.swing.JButton();
-        btCarregarRelatorioGeral = new javax.swing.JButton();
-        btGerarRelatoriaGeral = new javax.swing.JButton();
+        btCarregarExtrato = new javax.swing.JButton();
+        btSalvarExtrato = new javax.swing.JButton();
         lbReceitaMensal9 = new javax.swing.JLabel();
+        btApagarExtrato = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        btRemoverLancamento = new javax.swing.JButton();
+        btAdicionarReceita = new javax.swing.JButton();
+        btAdicionarDespesa = new javax.swing.JButton();
+        lbReceitaMensal12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -142,6 +158,7 @@ public class PessoaGUI extends javax.swing.JFrame {
         lbNomeUsuario.setText("...");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("FinanceAlly");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -151,28 +168,28 @@ public class PessoaGUI extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbNomeUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbSaudacao, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lbNomeUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbSaudacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(848, 848, 848))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(412, 412, 412)
-                    .addComponent(jLabel1)
-                    .addContainerGap(413, Short.MAX_VALUE)))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(407, 407, 407)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbSaudacao)
+                .addComponent(lbSaudacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbNomeUsuario)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addComponent(lbNomeUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(19, 19, 19)
-                    .addComponent(jLabel1)
-                    .addContainerGap(19, Short.MAX_VALUE)))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(19, 19, 19)))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -183,104 +200,51 @@ public class PessoaGUI extends javax.swing.JFrame {
         ttlDespesaMensal.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         ttlDespesaMensal.setText("Despesa Mensal");
 
-        lbValorReceitaMensal2.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        lbValorReceitaMensal2.setText("R$");
-
         lbReceitaMensal.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         lbReceitaMensal.setText("...");
 
-        lbValorReceitaMensal3.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        lbValorReceitaMensal3.setText("R$");
-
         lbDespesaMensal.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         lbDespesaMensal.setText("...");
-
-        btAdicionarReceita.setText("Adicionar Receita");
-        btAdicionarReceita.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btAdicionarReceitaActionPerformed(evt);
-            }
-        });
-
-        btAdicionarDespesa.setText("Adicionar Despesa");
-        btAdicionarDespesa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btAdicionarDespesaActionPerformed(evt);
-            }
-        });
-
-        btRemoverReceita.setText("Remover Receita");
-        btRemoverReceita.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btRemoverReceitaActionPerformed(evt);
-            }
-        });
-
-        btRemoverReceita1.setText("Remover Despesa");
-        btRemoverReceita1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btRemoverReceita1ActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(8, 8, 8)
+                .addComponent(lbDespesaMensal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(157, 157, 157))
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(ttlReceitaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ttlDespesaMensal)
+                .addComponent(lbReceitaMensal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(159, 159, 159))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(lbValorReceitaMensal2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbReceitaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(lbValorReceitaMensal3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbDespesaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btAdicionarDespesa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btAdicionarReceita, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btRemoverReceita1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btRemoverReceita, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(ttlReceitaMensal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(2, 2, 2))
+                    .addComponent(ttlDespesaMensal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(157, 157, 157))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ttlReceitaMensal)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbValorReceitaMensal2)
-                    .addComponent(lbReceitaMensal))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ttlDespesaMensal, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbValorReceitaMensal3)
-                    .addComponent(lbDespesaMensal))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btAdicionarReceita)
-                    .addComponent(btRemoverReceita1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btAdicionarDespesa)
-                    .addComponent(btRemoverReceita))
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addGap(6, 6, 6)
+                .addComponent(ttlReceitaMensal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(6, 6, 6)
+                .addComponent(ttlDespesaMensal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(2, 2, 2)
+                .addComponent(lbDespesaMensal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(5, 5, 5))
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lbReceitaMensal1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbReceitaMensal1.setText("Conta:");
-
-        lbValorReceitaMensal1.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        lbValorReceitaMensal1.setText("R$");
 
         btGerenciarConta.setText("Gerenciar Conta");
         btGerenciarConta.addActionListener(new java.awt.event.ActionListener() {
@@ -289,51 +253,58 @@ public class PessoaGUI extends javax.swing.JFrame {
             }
         });
 
-        lbReceitaMensal2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbReceitaMensal2.setText("Saldo atual");
-
         lbNumeroContaBancaria.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         lbNumeroContaBancaria.setText("...");
 
         lbSaldoContaBancariaAtual.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         lbSaldoContaBancariaAtual.setText("...");
 
+        lbReceitaMensal10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbReceitaMensal10.setText("Saldo atual");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btGerenciarConta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbReceitaMensal2)
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(lbValorReceitaMensal1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbSaldoContaBancariaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lbReceitaMensal1)
-                            .addComponent(lbNumeroContaBancaria, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap()
+                                .addComponent(lbReceitaMensal10, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+                                .addGap(81, 81, 81))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(lbReceitaMensal1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(49, 49, 49))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(lbNumeroContaBancaria, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(151, 151, 151))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btGerenciarConta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(lbSaldoContaBancariaAtual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(153, 153, 153)))))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbReceitaMensal2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbValorReceitaMensal1)
-                    .addComponent(lbSaldoContaBancariaAtual))
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(6, 6, 6)
+                .addComponent(lbSaldoContaBancariaAtual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(lbReceitaMensal1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lbNumeroContaBancaria)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btGerenciarConta)
-                .addContainerGap())
+                .addComponent(lbReceitaMensal1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(lbNumeroContaBancaria, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btGerenciarConta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(8, 8, 8))
         );
 
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -348,10 +319,8 @@ public class PessoaGUI extends javax.swing.JFrame {
             }
         });
 
-        lbReceitaMensal15.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbReceitaMensal15.setText("R$");
-
         lbValorReceitasAtuais.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbValorReceitasAtuais.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbValorReceitasAtuais.setText("...");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -359,31 +328,28 @@ public class PessoaGUI extends javax.swing.JFrame {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(lbReceitaMensal15)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbValorReceitasAtuais))
-                    .addComponent(lbReceitaMensal4))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(89, 89, 89)
+                .addComponent(btGerarDemReceitaAtual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(88, 88, 88))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btGerarDemReceitaAtual)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(lbReceitaMensal4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(146, 146, 146))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lbValorReceitasAtuais, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbReceitaMensal4)
-                .addGap(36, 36, 36)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbValorReceitasAtuais)
-                    .addComponent(lbReceitaMensal15))
-                .addGap(18, 18, 18)
-                .addComponent(btGerarDemReceitaAtual)
-                .addGap(32, 32, 32))
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(43, 43, 43)
+                .addComponent(lbValorReceitasAtuais, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(27, 27, 27)
+                .addComponent(btGerarDemReceitaAtual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(35, 35, 35))
         );
 
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -399,46 +365,38 @@ public class PessoaGUI extends javax.swing.JFrame {
         });
 
         lbValorDepesasAtuais.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbValorDepesasAtuais.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbValorDepesasAtuais.setText("...");
-
-        lbReceitaMensal18.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbReceitaMensal18.setText("R$");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(lbReceitaMensal3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(58, 58, 58))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(94, 94, 94)
+                        .addComponent(btGerarDemDespesaAtual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(83, 83, 83))
+            .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbReceitaMensal3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btGerarDemDespesaAtual)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel6Layout.createSequentialGroup()
-                    .addGap(132, 132, 132)
-                    .addComponent(lbReceitaMensal18)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(lbValorDepesasAtuais)
-                    .addContainerGap(154, Short.MAX_VALUE)))
+                .addComponent(lbValorDepesasAtuais, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbReceitaMensal3)
-                .addGap(88, 88, 88)
-                .addComponent(btGerarDemDespesaAtual)
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(45, 45, 45)
+                .addComponent(lbValorDepesasAtuais, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(btGerarDemDespesaAtual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(38, 38, 38))
-            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel6Layout.createSequentialGroup()
-                    .addGap(75, 75, 75)
-                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lbValorDepesasAtuais)
-                        .addComponent(lbReceitaMensal18))
-                    .addContainerGap(75, Short.MAX_VALUE)))
         );
 
         jPanel7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -446,37 +404,32 @@ public class PessoaGUI extends javax.swing.JFrame {
         lbReceitaMensal6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbReceitaMensal6.setText("Saldo geral");
 
-        lbReceitaMensal14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbReceitaMensal14.setText("R$");
-
         lbValorSaldoGeral.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbValorSaldoGeral.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbValorSaldoGeral.setText("...");
+        lbValorSaldoGeral.setToolTipText("");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(64, 64, 64))
+            .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbReceitaMensal6)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbReceitaMensal14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbValorSaldoGeral)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lbValorSaldoGeral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbReceitaMensal6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbValorSaldoGeral)
-                    .addComponent(lbReceitaMensal14))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(28, 28, 28)
+                .addComponent(lbValorSaldoGeral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(39, 39, 39))
         );
 
         jPanel8.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -492,49 +445,46 @@ public class PessoaGUI extends javax.swing.JFrame {
         });
 
         lbValorReceitasFuturas.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbValorReceitasFuturas.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbValorReceitasFuturas.setText("...");
-
-        lbReceitaMensal16.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbReceitaMensal16.setText("R$");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(lbReceitaMensal7))
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btGerarDemReceitaFutura)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(219, 219, 219))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                .addGap(101, 101, 101)
+                .addComponent(btGerarDemReceitaFutura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(95, 95, 95))
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(142, 142, 142)
-                .addComponent(lbReceitaMensal16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbValorReceitasFuturas)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(lbValorReceitasFuturas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbReceitaMensal7)
-                .addGap(36, 36, 36)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbValorReceitasFuturas)
-                    .addComponent(lbReceitaMensal16))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btGerarDemReceitaFutura)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(41, 41, 41)
+                .addComponent(lbValorReceitasFuturas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(27, 27, 27)
+                .addComponent(btGerarDemReceitaFutura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(37, 37, 37))
         );
 
         jPanel9.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lbReceitaMensal8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbReceitaMensal8.setText("Despesas futuras");
+
+        lbValorDepesasFuturas.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbValorDepesasFuturas.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbValorDepesasFuturas.setText("...");
 
         btGerarDemDespesaFutura.setText("Gerar Demonstrativo");
         btGerarDemDespesaFutura.addActionListener(new java.awt.event.ActionListener() {
@@ -543,69 +493,68 @@ public class PessoaGUI extends javax.swing.JFrame {
             }
         });
 
-        lbValorDepesasFuturas.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbValorDepesasFuturas.setText("...");
-
-        lbReceitaMensal17.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbReceitaMensal17.setText("R$");
-
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addGap(105, 105, 105)
+                .addComponent(btGerarDemDespesaFutura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(91, 91, 91))
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(215, 215, 215))
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbReceitaMensal8)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                .addContainerGap(111, Short.MAX_VALUE)
-                .addComponent(btGerarDemDespesaFutura)
-                .addGap(91, 91, 91))
-            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel9Layout.createSequentialGroup()
-                    .addGap(142, 142, 142)
-                    .addComponent(lbReceitaMensal17)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(lbValorDepesasFuturas)
-                    .addContainerGap(158, Short.MAX_VALUE)))
+                .addComponent(lbValorDepesasFuturas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbReceitaMensal8)
-                .addGap(88, 88, 88)
-                .addComponent(btGerarDemDespesaFutura)
-                .addContainerGap())
-            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel9Layout.createSequentialGroup()
-                    .addGap(75, 75, 75)
-                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lbValorDepesasFuturas)
-                        .addComponent(lbReceitaMensal17))
-                    .addContainerGap(75, Short.MAX_VALUE)))
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(42, 42, 42)
+                .addComponent(lbValorDepesasFuturas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(btGerarDemDespesaFutura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(41, 41, 41))
         );
 
         jPanel10.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btVisualizarRelatorioGeral.setText("Visualizar Relatório");
-
-        btCarregarRelatorioGeral.setText("CarregarRelatório");
-        btCarregarRelatorioGeral.addActionListener(new java.awt.event.ActionListener() {
+        btVisualizarRelatorioGeral.setText("Visualizar Extrato");
+        btVisualizarRelatorioGeral.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btCarregarRelatorioGeralActionPerformed(evt);
+                btVisualizarRelatorioGeralActionPerformed(evt);
             }
         });
 
-        btGerarRelatoriaGeral.setText("Gerar Relatório");
-        btGerarRelatoriaGeral.addActionListener(new java.awt.event.ActionListener() {
+        btCarregarExtrato.setText("Carregar Extrato");
+        btCarregarExtrato.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btGerarRelatoriaGeralActionPerformed(evt);
+                btCarregarExtratoActionPerformed(evt);
+            }
+        });
+
+        btSalvarExtrato.setText("Salvar Relatório");
+        btSalvarExtrato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSalvarExtratoActionPerformed(evt);
             }
         });
 
         lbReceitaMensal9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbReceitaMensal9.setText("Listar Todos Lançamentos");
+        lbReceitaMensal9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbReceitaMensal9.setText("Extrato Geral");
+
+        btApagarExtrato.setText("Apagar extrato");
+        btApagarExtrato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btApagarExtratoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -614,31 +563,90 @@ public class PessoaGUI extends javax.swing.JFrame {
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbReceitaMensal9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel10Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(lbReceitaMensal9)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(btVisualizarRelatorioGeral, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(btGerarRelatoriaGeral, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btCarregarRelatorioGeral, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
-                        .addGap(8, 8, 8)))
+                        .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btVisualizarRelatorioGeral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btCarregarExtrato, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btSalvarExtrato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btApagarExtrato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbReceitaMensal9)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(btVisualizarRelatorioGeral)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btGerarRelatoriaGeral)
-                    .addComponent(btCarregarRelatorioGeral))
-                .addGap(29, 29, 29))
+                    .addComponent(btVisualizarRelatorioGeral, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btSalvarExtrato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btCarregarExtrato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btApagarExtrato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(22, 22, 22))
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        btRemoverLancamento.setText("Remover Lançamento");
+        btRemoverLancamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btRemoverLancamentoActionPerformed(evt);
+            }
+        });
+
+        btAdicionarReceita.setText("Adicionar Receita");
+        btAdicionarReceita.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btAdicionarReceitaActionPerformed(evt);
+            }
+        });
+
+        btAdicionarDespesa.setText("Adicionar Despesa");
+        btAdicionarDespesa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btAdicionarDespesaActionPerformed(evt);
+            }
+        });
+
+        lbReceitaMensal12.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbReceitaMensal12.setText("Gerenciar Lancamentos");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lbReceitaMensal12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(107, 107, 107))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btRemoverLancamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(btAdicionarDespesa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btAdicionarReceita, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addContainerGap())))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(lbReceitaMensal12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(10, 10, 10)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btAdicionarDespesa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btAdicionarReceita, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btRemoverLancamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -650,48 +658,50 @@ public class PessoaGUI extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(10, 10, 10)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -703,25 +713,10 @@ public class PessoaGUI extends javax.swing.JFrame {
         alterarTextos();
     }//GEN-LAST:event_btGerenciarContaActionPerformed
 
-    private void btAdicionarReceitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarReceitaActionPerformed
-        try {
-            AdicionarReceitaGUI adcReceitaGUI = new AdicionarReceitaGUI(this, true, pessoa); // Passar o objeto pessoa
-            adcReceitaGUI.setVisible(true);
-            alterarTextos();
-
-        } catch(IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-        } 
-    }//GEN-LAST:event_btAdicionarReceitaActionPerformed
-
-    private void btRemoverReceitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoverReceitaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btRemoverReceitaActionPerformed
-
     private void btGerarDemReceitaAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemReceitaAtualActionPerformed
 
-        if(pessoa.getReceitas().isEmpty()){
-            JOptionPane.showMessageDialog(this, "Nenhuma receita inserida!");
+        if (pessoa.exibirDemonstrativoReceitasAtuais().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Não há receitas lançadas até a data atual!");
         } else {
             VisDemonstrativoRecAtual vdra = new VisDemonstrativoRecAtual(this, true, pessoa);
             vdra.setVisible(true);
@@ -729,8 +724,8 @@ public class PessoaGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btGerarDemReceitaAtualActionPerformed
 
     private void btGerarDemReceitaFuturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemReceitaFuturaActionPerformed
-        if(pessoa.getReceitas().isEmpty()){
-            JOptionPane.showMessageDialog(this, "Nenhuma despesa inserida!");
+        if (pessoa.exibirDemonstrativoReceitasFuturas().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Não há receitas futuras inseridas!");
         } else {
             VisDemonstrativoRecFutura vdrf = new VisDemonstrativoRecFutura(this, true, pessoa);
             vdrf.setVisible(true);
@@ -738,8 +733,8 @@ public class PessoaGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btGerarDemReceitaFuturaActionPerformed
 
     private void btGerarDemDespesaAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemDespesaAtualActionPerformed
-        if(pessoa.getDespesas().isEmpty()){
-            JOptionPane.showMessageDialog(this, "Nenhuma despesa inserida!");
+        if (pessoa.exibirDemonstrativoDespesasAtuais().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Não há despesas lançadas até a data atual!");
         } else {
             VisDemonstrativoDespAtual vdda = new VisDemonstrativoDespAtual(this, true, pessoa);
             vdda.setVisible(true);
@@ -747,14 +742,64 @@ public class PessoaGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btGerarDemDespesaAtualActionPerformed
 
     private void btGerarDemDespesaFuturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemDespesaFuturaActionPerformed
-        
-        if(pessoa.getDespesas().isEmpty()){
-            JOptionPane.showMessageDialog(this, "Nenhuma despesa inserida!");
+
+        if (pessoa.getDespesas().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Não há despesas futuras inseridas!");
         } else {
             VisDemonstrativoDespFutura vddf = new VisDemonstrativoDespFutura(this, true, pessoa);
             vddf.setVisible(true);
         }
     }//GEN-LAST:event_btGerarDemDespesaFuturaActionPerformed
+
+    private void btSalvarExtratoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvarExtratoActionPerformed
+        if (pessoa.getHistorico().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Não há lançamentos associados a esta conta!");
+        } else {
+
+            int resposta = JOptionPane.showConfirmDialog(null, "Você quer salvar o extrato da conta?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+
+            if (resposta == JOptionPane.OK_OPTION) {
+                extrato.salvarDados();
+                JOptionPane.showMessageDialog(this, "Arquivo salvo com sucesso!");
+            }
+        }
+    }//GEN-LAST:event_btSalvarExtratoActionPerformed
+
+    private void btCarregarExtratoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCarregarExtratoActionPerformed
+        if (!extrato.getArquivo().exists()) {
+            JOptionPane.showMessageDialog(null, "O arquivo CSV não existe!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            int resposta = JOptionPane.showConfirmDialog(null, "Você quer carregar dados a esta conta?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+
+            if (resposta == JOptionPane.OK_OPTION) {
+                extrato.carregarDados();
+                alterarTextos();
+
+            }
+        }
+    }//GEN-LAST:event_btCarregarExtratoActionPerformed
+
+    private void btVisualizarRelatorioGeralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btVisualizarRelatorioGeralActionPerformed
+
+        if (pessoa.getHistorico().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Não há lançamentos associados a esta conta!");
+        } else {
+            VisExtrato extrato = new VisExtrato(this, true, pessoa); // Passar o objeto pessoa
+            extrato.setVisible(true);
+        }
+
+    }//GEN-LAST:event_btVisualizarRelatorioGeralActionPerformed
+
+    private void btAdicionarReceitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarReceitaActionPerformed
+        try {
+            AdicionarReceitaGUI adcReceitaGUI = new AdicionarReceitaGUI(this, true, pessoa); // Passar o objeto pessoa
+            adcReceitaGUI.setVisible(true);
+            alterarTextos();
+
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }//GEN-LAST:event_btAdicionarReceitaActionPerformed
 
     private void btAdicionarDespesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarDespesaActionPerformed
         try {
@@ -762,58 +807,70 @@ public class PessoaGUI extends javax.swing.JFrame {
             adcDespesaGUI.setVisible(true);
             alterarTextos();
 
-        } catch(IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
-        } 
+        }
     }//GEN-LAST:event_btAdicionarDespesaActionPerformed
 
-    private void btRemoverReceita1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoverReceita1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btRemoverReceita1ActionPerformed
+    private void btRemoverLancamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoverLancamentoActionPerformed
+        if (pessoa.getHistorico().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Não há lanpçamentos associados a esta conta!");
+        } else {
+            RemoverLancamento remLancamento = new RemoverLancamento(this, true, pessoa);
+            remLancamento.setVisible(true);
+            alterarTextos();
+        }
+    }//GEN-LAST:event_btRemoverLancamentoActionPerformed
 
-    private void btGerarRelatoriaGeralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarRelatoriaGeralActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btGerarRelatoriaGeralActionPerformed
+    private void btApagarExtratoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btApagarExtratoActionPerformed
+        if (!extrato.getArquivo().exists()) {
+            JOptionPane.showMessageDialog(null, "O arquivo CSV não existe!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        } else {
 
-    private void btCarregarRelatorioGeralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCarregarRelatorioGeralActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btCarregarRelatorioGeralActionPerformed
+            int resposta = JOptionPane.showConfirmDialog(null, "Você deseja realmenente apagar o arquivo?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+
+            if (resposta == JOptionPane.OK_OPTION) {
+                extrato.apagarArquivo();
+            }
+        }
+    }//GEN-LAST:event_btApagarExtratoActionPerformed
 
     /**
      * @param args the command line arguments
      */
-public static void main(String args[]) {
-    // ... (restante do código)
+    public static void main(String args[]) {
+        // ... (restante do código)
 
-    /* Create and display the form */
-    java.awt.EventQueue.invokeLater(new Runnable() {
-        public void run() {
-            if (args.length >= 3) { // Verifica se há argumentos suficientes
-                new PessoaGUI(args[0], args[1]).setVisible(true); 
-            } else {
-                // Lida com o caso de argumentos insuficientes (ex: exibir mensagem de erro)
-                System.err.println("Erro: Nome, número da conta e saldo são obrigatórios.");
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                if (args.length >= 3) { // Verifica se há argumentos suficientes
+                    new PessoaGUI(args[0], args[1]).setVisible(true);
+                } else {
+                    // Lida com o caso de argumentos insuficientes (ex: exibir mensagem de erro)
+                    System.err.println("Erro: Nome, número da conta e saldo são obrigatórios.");
+                }
             }
-        }
-    });
-}
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdicionarDespesa;
     private javax.swing.JButton btAdicionarReceita;
-    private javax.swing.JButton btCarregarRelatorioGeral;
+    private javax.swing.JButton btApagarExtrato;
+    private javax.swing.JButton btCarregarExtrato;
     private javax.swing.JButton btGerarDemDespesaAtual;
     private javax.swing.JButton btGerarDemDespesaFutura;
     private javax.swing.JButton btGerarDemReceitaAtual;
     private javax.swing.JButton btGerarDemReceitaFutura;
-    private javax.swing.JButton btGerarRelatoriaGeral;
     private javax.swing.JButton btGerenciarConta;
-    private javax.swing.JButton btRemoverReceita;
-    private javax.swing.JButton btRemoverReceita1;
+    private javax.swing.JButton btRemoverLancamento;
+    private javax.swing.JButton btSalvarExtrato;
     private javax.swing.JButton btVisualizarRelatorioGeral;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -826,12 +883,8 @@ public static void main(String args[]) {
     private javax.swing.JLabel lbNumeroContaBancaria;
     private javax.swing.JLabel lbReceitaMensal;
     private javax.swing.JLabel lbReceitaMensal1;
-    private javax.swing.JLabel lbReceitaMensal14;
-    private javax.swing.JLabel lbReceitaMensal15;
-    private javax.swing.JLabel lbReceitaMensal16;
-    private javax.swing.JLabel lbReceitaMensal17;
-    private javax.swing.JLabel lbReceitaMensal18;
-    private javax.swing.JLabel lbReceitaMensal2;
+    private javax.swing.JLabel lbReceitaMensal10;
+    private javax.swing.JLabel lbReceitaMensal12;
     private javax.swing.JLabel lbReceitaMensal3;
     private javax.swing.JLabel lbReceitaMensal4;
     private javax.swing.JLabel lbReceitaMensal6;
@@ -842,9 +895,6 @@ public static void main(String args[]) {
     private javax.swing.JLabel lbSaudacao;
     private javax.swing.JLabel lbValorDepesasAtuais;
     private javax.swing.JLabel lbValorDepesasFuturas;
-    private javax.swing.JLabel lbValorReceitaMensal1;
-    private javax.swing.JLabel lbValorReceitaMensal2;
-    private javax.swing.JLabel lbValorReceitaMensal3;
     private javax.swing.JLabel lbValorReceitasAtuais;
     private javax.swing.JLabel lbValorReceitasFuturas;
     private javax.swing.JLabel lbValorSaldoGeral;
