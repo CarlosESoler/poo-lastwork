@@ -103,27 +103,21 @@ public class Pessoa {
             throw new IllegalArgumentException("Já existe uma receita com o este ID!");
         }
 
-        if (despesas.containsKey(id)) {
-            throw new IllegalArgumentException("ID inserida já associada a uma despesa!");
-        }
-
         receitas.put(id, receita);
     }
 
     public void adicionarDespesa(Integer id, Despesa despesa) {
 
-        if (id == null) {
-            throw new IllegalArgumentException("O ID da despesa não pode ser nulo");
-        }
         if (despesa == null) {
             throw new IllegalArgumentException("Despesa não pode ser nula");
         }
-        if (despesas.containsKey(id)) {
-            throw new IllegalArgumentException("Já existe uma despesa com o mesmo ID");
+
+        if (id == null) {
+            throw new IllegalArgumentException("O ID da despesa não pode ser nulo");
         }
 
-        if (receitas.containsKey(id)) {
-            throw new IllegalArgumentException("ID inserida já associada a uma receita!");
+        if (despesas.containsKey(id)) {
+            throw new IllegalArgumentException("Já existe uma despesa com o mesmo ID");
         }
 
         this.despesas.put(id, despesa);

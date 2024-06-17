@@ -27,7 +27,11 @@ public class Extrato {
     public Extrato(Pessoa titular) {
         this.titular = titular;
         arquivoCSV = "lancamentos.csv";
-        arquivo = new File(arquivoCSV);
+        try {
+            arquivo = new File(arquivoCSV);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao criar arquivo CSV: " + e.getMessage());
+        }
     }
 
     public File getArquivo() {
@@ -46,11 +50,8 @@ public class Extrato {
     public void carregarDados() {
 
         String separadorCSV = ",";
+        try(BufferedReader br = new BufferedReader(new FileReader(arquivoCSV))) {
 
-        BufferedReader br = null;
-        try {
-
-            br = new BufferedReader(new FileReader(arquivoCSV));
             String linha;
             br.readLine(); // Ignora a primeira linha (cabeçalho)
 
@@ -90,14 +91,6 @@ public class Extrato {
             JOptionPane.showMessageDialog(null, "Erro ao carregar dados do arquivo CSV: " + ex.getMessage());
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(null, "Existem lançamentos na plataforma com IDs duplicados em relação aos IDs contidos no arquivo. Recomenda-se remover os lançamentos duplicados na plataforma ou alterar os IDs no documento!");
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
@@ -105,10 +98,7 @@ public class Extrato {
         String arquivoCSV = "lancamentos.csv";
         String separadorCSV = ",";
 
-        PrintWriter writer = null;
-        try {
-            writer = new PrintWriter(new FileWriter(arquivoCSV));
-
+        try (PrintWriter writer = new PrintWriter(new FileWriter(arquivoCSV))) {
             // Escreve o cabeçalho
             writer.println("\"Valor\",\"Data\",\"Categoria\",\"Tipo\",\"ID\"");
 
@@ -138,10 +128,6 @@ public class Extrato {
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Erro ao salvar dados no arquivo CSV");
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 }
