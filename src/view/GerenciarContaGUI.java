@@ -7,7 +7,6 @@ package view;
 import javax.swing.JOptionPane;
 import model.ContaBancaria;
 import model.Pessoa;
-import model.lancamentos.Receita;
 
 /**
  *
@@ -198,7 +197,12 @@ public class GerenciarContaGUI extends javax.swing.JDialog {
 
     private void btAlterarNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAlterarNomeActionPerformed
         try {
-            gerenciarPessoa.setNome(tfAlterarNome.getText());
+            int resposta = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja alterar o nome da conta?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+
+            if (resposta == JOptionPane.OK_OPTION) {
+                gerenciarPessoa.setNome(tfAlterarNome.getText());
+            }
+
             limparCampos();
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
@@ -208,7 +212,12 @@ public class GerenciarContaGUI extends javax.swing.JDialog {
 
     private void btAlterarNumeroContaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAlterarNumeroContaActionPerformed
         try {
-            gerenciarConta.setNumero(tfAlterarNumeroConta.getText());
+            int resposta = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja alterar o número da conta?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+
+            if (resposta == JOptionPane.OK_OPTION) {
+                gerenciarConta.setNumero(tfAlterarNumeroConta.getText());
+            }
+
             limparCampos();
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
@@ -264,7 +273,7 @@ public class GerenciarContaGUI extends javax.swing.JDialog {
 
                 Pessoa pessoa = new Pessoa(args[0]);
                 ContaBancaria conta = new ContaBancaria(args[1]);
-                PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
+                PessoaGUI pessoaGUI = new PessoaGUI(args[0], Integer.parseInt(args[1]));
                 pessoaGUI.setVisible(true);
 
                 GerenciarContaGUI dialog = new GerenciarContaGUI(new javax.swing.JFrame(), true, pessoa, conta);

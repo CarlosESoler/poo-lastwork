@@ -12,31 +12,52 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- *
- * @author csoler
+ * Classe: essa classe refere-se ao registro de lançamentos genéricos
  */
 public class Lancamento {
 
     private BigDecimal valor;
     private LocalDate dataLancamento;
 
+    /**
+     * Construtor: inicializa as variáveis referentes a data e valor do lançamento
+     * @param dataLancamento do tipo LocalDate
+     * @param valor do tipo String
+     * @throws IllegalArgumentException 
+     */
     public Lancamento(LocalDate dataLancamento, String valor) throws IllegalArgumentException {
         setDataLancamento(dataLancamento);
         setValor(valor);
     }
 
+    /**
+     * Getter: capta a data de lançamento
+     * @return dataLancamento do tipo LocalDate
+     */
     public LocalDate getDataLancamento() {
         return dataLancamento;
     }
 
+    /**
+     * Setter: Registra a data de lançamento 
+     * @param dataLancamento do tipo LocalDate
+     */
     public void setDataLancamento(LocalDate dataLancamento) {
         this.dataLancamento = dataLancamento;
     }
 
+    /**
+     * Getter: capta o valor do lançamento
+     * @return valor do tipo BigDecimal
+     */
     public BigDecimal getValor() {
         return valor;
     }
-
+    
+    /**
+     * Setter: registra o valor do lançamento recebido em String e registra-o em BigDecimal
+     * @param valor do tipo String
+     */
     public void setValor(String valor) {
         try {
             if (valor.isEmpty()) {

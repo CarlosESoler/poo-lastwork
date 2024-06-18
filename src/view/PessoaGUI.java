@@ -24,11 +24,11 @@ public class PessoaGUI extends javax.swing.JFrame {
     ContaBancaria conta;
     Extrato extrato;
 
-    public PessoaGUI(String nome, String numeroConta) {
+    public PessoaGUI(String nome, int numeroConta) {
         initComponents();
         setLocationRelativeTo(null);
         pessoa = new Pessoa(nome);
-        conta = new ContaBancaria(numeroConta);
+        conta = new ContaBancaria(String.valueOf(numeroConta));
         extrato = new Extrato(pessoa);
 
         inicializarContexto();
@@ -68,8 +68,9 @@ public class PessoaGUI extends javax.swing.JFrame {
 
     public void alterarTextos() {
         lbNomeUsuario.setText(pessoa.getNome().trim());
-        lbNumeroContaBancaria.setText(conta.getNumero().trim());
+        lbNumeroContaBancaria.setText(String.valueOf(conta.getNumero()));
         lbSaldoContaBancariaAtual.setText("R$" + formatarNumero(conta.consultaSaldoAtual()));
+        //esta funcionando ahhhhhhhh
         lbValorSaldoGeral.setText("R$" + formatarNumero(conta.consultaSaldoIndependentePeriodo()));
         lbValorDepesasAtuais.setText("R$" + formatarNumero(conta.consultarValorDespesasAtual()));
         lbValorReceitasAtuais.setText("R$" + formatarNumero(conta.consultarValorReceitasAtual()));
@@ -538,7 +539,7 @@ public class PessoaGUI extends javax.swing.JFrame {
             }
         });
 
-        btSalvarExtrato.setText("Salvar Relatório");
+        btSalvarExtrato.setText("Salvar Extrato");
         btSalvarExtrato.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSalvarExtratoActionPerformed(evt);
@@ -549,7 +550,7 @@ public class PessoaGUI extends javax.swing.JFrame {
         lbReceitaMensal9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbReceitaMensal9.setText("Extrato Geral");
 
-        btApagarExtrato.setText("Apagar extrato");
+        btApagarExtrato.setText("Apagar Extrato");
         btApagarExtrato.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btApagarExtratoActionPerformed(evt);
@@ -743,7 +744,7 @@ public class PessoaGUI extends javax.swing.JFrame {
 
     private void btGerarDemDespesaFuturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGerarDemDespesaFuturaActionPerformed
 
-        if (pessoa.getDespesas().isEmpty()) {
+        if (pessoa.exibirDemonstrativoDespesasFuturas().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Não há despesas futuras inseridas!");
         } else {
             VisDemonstrativoDespFutura vddf = new VisDemonstrativoDespFutura(this, true, pessoa);
@@ -814,7 +815,7 @@ public class PessoaGUI extends javax.swing.JFrame {
 
     private void btRemoverLancamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoverLancamentoActionPerformed
         if (pessoa.getHistorico().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Não há lanpçamentos associados a esta conta!");
+            JOptionPane.showMessageDialog(this, "Não há lançamentos associados a esta conta!");
         } else {
             RemoverLancamento remLancamento = new RemoverLancamento(this, true, pessoa);
             remLancamento.setVisible(true);
@@ -845,7 +846,7 @@ public class PessoaGUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 if (args.length >= 3) { // Verifica se há argumentos suficientes
-                    new PessoaGUI(args[0], args[1]).setVisible(true);
+                    new PessoaGUI(args[0], Integer.parseInt(args[1])).setVisible(true);
                 } else {
                     // Lida com o caso de argumentos insuficientes (ex: exibir mensagem de erro)
                     System.err.println("Erro: Nome, número da conta e saldo são obrigatórios.");

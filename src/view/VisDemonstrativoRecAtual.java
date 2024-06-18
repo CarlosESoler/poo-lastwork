@@ -8,12 +8,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import javax.swing.SwingUtilities;
-import javax.swing.text.html.HTMLDocument;
-import model.ContaBancaria;
 import model.Pessoa;
 import model.lancamentos.Receita;
 
@@ -138,7 +133,7 @@ public class VisDemonstrativoRecAtual extends javax.swing.JDialog {
                     return;
                 }
 
-                PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
+                PessoaGUI pessoaGUI = new PessoaGUI(args[0], Integer.parseInt(args[1]));
                 pessoaGUI.setVisible(true);
 
                 VisDemonstrativoRecAtual dialog = new VisDemonstrativoRecAtual(pessoaGUI, true, pessoa);

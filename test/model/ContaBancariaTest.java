@@ -6,7 +6,6 @@ package model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import model.interfaces.TipoDespesa;
 import static model.interfaces.TipoDespesa.RESIDENCIA;
 import static model.interfaces.TipoDespesa.SAUDE;
 import static model.interfaces.TipoDespesa.TRANSPORTE;

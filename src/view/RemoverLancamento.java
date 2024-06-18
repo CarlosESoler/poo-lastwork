@@ -124,13 +124,18 @@ public class RemoverLancamento extends javax.swing.JDialog {
             if (!pessoaRemLancamento.getHistorico().containsKey(id)) {
                 throw new IllegalArgumentException("Não existe lançamento com esta ID!");
             } else {
-                if (pessoaRemLancamento.getHistorico().get(id).getLancamento() instanceof Receita) {
-                    pessoaRemLancamento.removerReceita(id);
-                } else {
-                    pessoaRemLancamento.removerDespesa(id);
+                int resposta = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja alterar o nome da conta?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+
+                if (resposta == JOptionPane.OK_OPTION) {
+                    if (pessoaRemLancamento.getHistorico().get(id).getLancamento() instanceof Receita) {
+                        pessoaRemLancamento.removerReceita(id);
+                    } else {
+                        pessoaRemLancamento.removerDespesa(id);
+                    }
+                    JOptionPane.showMessageDialog(this, "Lançamento removido com sucesso!");
+
                 }
-                JOptionPane.showMessageDialog(this, "Lançamento removido com sucesso!");
-                
+
             }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "A ID deve ser um número inteiro!");
@@ -188,7 +193,7 @@ public class RemoverLancamento extends javax.swing.JDialog {
                     return;
                 }
 
-                PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
+                PessoaGUI pessoaGUI = new PessoaGUI(args[0], Integer.parseInt(args[1]));
                 pessoaGUI.setVisible(true);
 
                 RemoverLancamento dialog = new RemoverLancamento(new javax.swing.JFrame(), true, pessoa);

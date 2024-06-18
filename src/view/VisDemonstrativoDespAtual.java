@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import model.Pessoa;
 import model.lancamentos.Despesa;
 
@@ -158,7 +157,7 @@ public class VisDemonstrativoDespAtual extends javax.swing.JDialog {
                     return;
                 }
 
-                PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
+                PessoaGUI pessoaGUI = new PessoaGUI(args[0], Integer.parseInt(args[1]));
                 pessoaGUI.setVisible(true);
                 VisDemonstrativoDespAtual dialog = new VisDemonstrativoDespAtual(new javax.swing.JFrame(), true, pessoa);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {

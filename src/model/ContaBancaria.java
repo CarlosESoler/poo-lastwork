@@ -6,63 +6,72 @@
 package model;
 
 import model.lancamentos.Despesa;
-import model.lancamentos.Lancamento;
 import model.lancamentos.Receita;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.swing.JOptionPane;
 
 /**
- *
- * @author csoler
+ * Classe: essa classe refere-se a criação de um conta bancária, sendo incializada com o registro do número da conta
  */
 public class ContaBancaria {
 
-    private String numero;
+    private int numero;
     private BigDecimal saldo = BigDecimal.ZERO;
     private Pessoa titular;
 
-    //Construtor: inicializa settando o número da conta bancária
+    /**
+     * Construtor: inicializa o objeto registrando o n[umero da conta
+     * @param numero do tipo  String 
+     */
     public ContaBancaria(String numero) {
-        
+
+        setNumero(numero);
+    }
+
+    /**
+     * Setter: define o número da conta bancária convertendo-o para o tipo int
+     * @param numero do tipo String
+     */
+    public void setNumero(String numero) {
         if (numero.isEmpty() || numero.isBlank()) {
             throw new IllegalArgumentException("Número da conta não pode ser nulo ou vazio");
         }
-        
+
         if (numero.length() >= 10) {
             throw new IllegalArgumentException("Número da conta não pode ter mais que 10 dígitos");
         }
-        
-        this.numero = numero;
-    }
 
-    //Setter: define o número da conta bancária
-    public void setNumero(String numero) {
-        if (numero.isBlank()) {
-            throw new IllegalArgumentException("Número da conta deve ser preenchido!");
+        try {
+            this.numero = Integer.parseInt(numero);
+
+        } catch (NumberFormatException ex) {
+            throw new NumberFormatException("Número da conta deve ter apenas dígitos!");
         }
-        
-        int resposta = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja alterar o número da conta?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
 
-        if (resposta == JOptionPane.OK_OPTION) {
-            this.numero = numero;
-        } 
     }
+    
+    
 
-    //Capta o número da conta bancária
-    public String getNumero() {
+    /**
+     * Getter: Capta o número da conta bancária
+     * @return numero da conta bancária como int
+     */
+    public int getNumero() {
         return numero;
     }
 
-    //Getter: Capta o titular da conta
+    /**
+     * Getter: Capta o titular da conta
+     * @return titular da conta bancária como String
+     */
     public Pessoa getTitular() {
         return titular;
     }
 
-    //Setter: define o titular da conta
+    /**
+     * Setter: define o titular da conta
+     * @param titular da conta do tipo Pessoa
+     */
     public void setTitular(Pessoa titular) {
         if (titular == null) {
             throw new IllegalArgumentException("Titular da conta não pode ser nulo");
@@ -70,7 +79,19 @@ public class ContaBancaria {
         this.titular = titular;
     }
 
-    //Adiciona saldo à conta
+     /**
+     * Getter: Capta o o saldo da conta
+     * @return saldo da conta bancária como BigDecimal
+     */
+    public BigDecimal getSaldo() {
+        return saldo;
+    }
+    
+
+    /**
+     * Método sem retorno que soma saldo à conta bancária
+     * @param valor do tipo String
+     */
     public void somaSaldo(String valor) {
         try {
             if (valor.isEmpty()) {
@@ -87,7 +108,10 @@ public class ContaBancaria {
         }
     }
 
-    //Subtrai saldo da conta
+    /**
+     * Método sem retorno que subtrai saldo à conta bancária
+     * @param valor do tipo String
+     */
     public void subtraiSaldo(String valor) {
         try {
             if (valor.isEmpty()) {
@@ -104,11 +128,10 @@ public class ContaBancaria {
         }
     }
 
-    public BigDecimal getSaldo() {
-        return saldo;
-    }
-
-    //Mostra o valor do saldo até o momento
+    /**
+     * Método que percorre as receitas e despesas 
+     * @return saldo até o dia atual em BigDecimal 
+     */
     public BigDecimal consultaSaldoAtual() {
         BigDecimal saldoAtual = BigDecimal.ZERO;
 
@@ -126,7 +149,10 @@ public class ContaBancaria {
         return saldoAtual;
     }
 
-    //Mostra o saldo geral (atual + futuro)
+    /**
+     * Método que retorna o valor do saldo independente do período
+     * @return alor do saldo independente do período em BigDecimal
+     */
     public BigDecimal consultaSaldoIndependentePeriodo() {
         BigDecimal saldoAtual = BigDecimal.ZERO;
 
@@ -140,7 +166,10 @@ public class ContaBancaria {
         return saldoAtual;
     }
 
-    //Mostra o valor das receitas até o momento
+    /**
+     * Método que retorna o valor das receitas até o dia da consulta
+     * @return valor das receitas até o dia atual em BigDecimal 
+     */
     public BigDecimal consultarValorReceitasAtual() {
 
         BigDecimal valorReceitas = BigDecimal.ZERO;
@@ -152,7 +181,10 @@ public class ContaBancaria {
         return valorReceitas;
     }
 
-    //Mostra o valor das despesas até o momento
+    /**
+     * Método que retorna o valor das despesas até o dia da consulta
+     * @return valor das despesas até o dia atual em BigDecimal 
+     */
     public BigDecimal consultarValorDespesasAtual() {
         BigDecimal valorDespesas = BigDecimal.ZERO;
         for (Despesa d : getTitular().getDespesas()) {
@@ -163,7 +195,10 @@ public class ContaBancaria {
         return valorDespesas;
     }
 
-    //Mostra o valor das receitas futuras
+    /**
+     * Método que retorna o valor das receitas futuras
+     * @return valor das receitas independente do período em BigDecimal 
+     */
     public BigDecimal consultarValorReceitasFuturo() {
         BigDecimal valorReceitas = BigDecimal.ZERO;
         for (Receita r : getTitular().getReceitas()) {
@@ -174,7 +209,10 @@ public class ContaBancaria {
         return valorReceitas;
     }
 
-    //Mostra o valor das despesas futuras
+    /**
+     * Método que retorna o valor das despesas futuras
+     * @return valor das despesas independente do período em BigDecimal 
+     */
     public BigDecimal consultarValorDespesasFuturo() {
 
         BigDecimal valorDespesas = BigDecimal.ZERO;
@@ -185,7 +223,11 @@ public class ContaBancaria {
         }
         return valorDespesas;
     }
-
+    
+    /**
+     * Método que retorna o valor das receitas do mês corrente
+     * @return valor das receitas do mês corrente
+     */
     public BigDecimal consultarValorReceitasMensal() {
         BigDecimal valorReceitas = BigDecimal.ZERO;
         for (Receita r : getTitular().getReceitas()) {
@@ -195,7 +237,11 @@ public class ContaBancaria {
         }
         return valorReceitas;
     }
-
+    
+    /**
+     * Método que retorna o valor das despesas do mês corrente
+     * @return valor das despesas do mês corrente
+     */
     public BigDecimal consultarValorDespesasMensal() {
         BigDecimal valorDespesas = BigDecimal.ZERO;
         for (Despesa r : getTitular().getDespesas()) {
@@ -205,7 +251,12 @@ public class ContaBancaria {
         }
         return valorDespesas;
     }
-
+    
+    /**
+     * Método que confere se a data providenciada é igual ou anterior ao dia da consulta
+     * @param data do tipo LocalDate
+     * @return true ou false
+     */
     public boolean isDataMenorOuIgual(LocalDate data) {
         return data.isBefore(LocalDate.now()) || data.isEqual(LocalDate.now());
 

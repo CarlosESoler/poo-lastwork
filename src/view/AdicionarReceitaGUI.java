@@ -322,7 +322,7 @@ public class AdicionarReceitaGUI extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 Pessoa pessoa = new Pessoa(args[0]);
-                PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
+                PessoaGUI pessoaGUI = new PessoaGUI(args[0], Integer.parseInt(args[1]));
                 pessoaGUI.setVisible(true);
 
                 AdicionarReceitaGUI dialog = new AdicionarReceitaGUI(new javax.swing.JFrame(), true, pessoa);

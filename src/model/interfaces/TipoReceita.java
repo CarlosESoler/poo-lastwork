@@ -6,8 +6,7 @@
 package model.interfaces;
 
 /**
- *
- * @author csoler
+ * Tipos de receitas aos quais se pode registrá-las
  */
 public enum TipoReceita {
     SALARIO, DECIMO_TERCEIRO, FERIAS, OUTRAS;
