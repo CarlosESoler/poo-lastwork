@@ -2,17 +2,11 @@ package view;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import model.HistoricoLancamento;
 import model.Pessoa;
 import model.lancamentos.Despesa;
-import model.lancamentos.Lancamento;
 import model.lancamentos.Receita;
 
 /*
@@ -180,7 +174,7 @@ public class VisExtrato extends javax.swing.JDialog {
                     return;
                 }
 
-                PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
+                PessoaGUI pessoaGUI = new PessoaGUI(args[0], Integer.parseInt(args[1]));
                 pessoaGUI.setVisible(true);
 
                 VisExtrato dialog = new VisExtrato(new javax.swing.JFrame(), true, pessoa);

@@ -158,7 +158,7 @@ public class VisDemonstrativoDespFutura extends javax.swing.JDialog {
                     return;
                 }
 
-                PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
+                PessoaGUI pessoaGUI = new PessoaGUI(args[0], Integer.parseInt(args[1]));
                 pessoaGUI.setVisible(true);
 
                 VisDemonstrativoDespFutura dialog = new VisDemonstrativoDespFutura(new javax.swing.JFrame(), true, pessoa);

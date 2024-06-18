@@ -6,8 +6,7 @@
 package model.interfaces;
 
 /**
- *
- * @author csoler
+ * Tipos de despesas aos quais se pode registrá-las
  */
 public enum TipoDespesa {
      ALIMENTACAO, TRANSPORTE, RESIDENCIA, SAUDE, EDUCACAO, ENTRETENIMENTO, OUTRAS;

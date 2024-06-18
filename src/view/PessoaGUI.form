@@ -779,7 +779,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="btSalvarExtrato">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Salvar Relat&#xf3;rio"/>
+            <Property name="text" type="java.lang.String" value="Salvar Extrato"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btSalvarExtratoActionPerformed"/>
@@ -796,7 +796,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="btApagarExtrato">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Apagar extrato"/>
+            <Property name="text" type="java.lang.String" value="Apagar Extrato"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btApagarExtratoActionPerformed"/>

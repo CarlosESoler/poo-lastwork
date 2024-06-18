@@ -8,11 +8,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
-import java.util.Enumeration;
-import javax.swing.AbstractButton;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
 import model.HistoricoLancamento;
 import model.Pessoa;
 import model.interfaces.TipoDespesa;
@@ -351,7 +347,7 @@ public class AdicionarDespesaGUI extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 Pessoa pessoa = new Pessoa(args[0]);
-                PessoaGUI pessoaGUI = new PessoaGUI(args[0], args[1]);
+                PessoaGUI pessoaGUI = new PessoaGUI(args[0], Integer.parseInt(args[1]));
                 pessoaGUI.setVisible(true);
 
                 AdicionarDespesaGUI dialog = new AdicionarDespesaGUI(new javax.swing.JFrame(), true, pessoa);

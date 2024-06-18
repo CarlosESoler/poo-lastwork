@@ -13,21 +13,35 @@ import java.time.LocalDate;
 
 
 /**
- *
- * @author csoler
+ * Classe: essa classe refere-se ao registro de uma despesa
+ * Herda métodos diretamente de Lancamento
  */
 public class Despesa extends Lancamento {
     TipoDespesa tipoDespesa;
-
+    
+    /**
+     * Construtor: inicializa as variáveis referentes a data, tipo e valor da despesa
+     * @param dataLancamento do tipo LocalDate
+     * @param tipoDespesa do tipo TipoDespesa
+     * @param valor do tipo String
+     */
     public Despesa(LocalDate dataLancamento, TipoDespesa tipoDespesa, String valor) {
         super(dataLancamento, valor);
         setTipoDespesa(tipoDespesa);
     }
 
+    /**
+     * Getter: capta o tipo da despesa
+     * @return tipoDespesa do tipo TipoDespesa
+     */
     public TipoDespesa getTipoDespesa() {
         return tipoDespesa;
     }
-
+    
+/**
+ * Setter: define o tipo de despesa
+ * @param tipoDespesa do tipo TipoDespesa
+ */
     public void setTipoDespesa(TipoDespesa tipoDespesa) {
         if(tipoDespesa == null) {
             throw new IllegalArgumentException("Tipo de despesa não pode ser nulo!");
@@ -35,3 +49,4 @@ public class Despesa extends Lancamento {
         this.tipoDespesa = tipoDespesa;
     }
 }
+

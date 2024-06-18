@@ -18,29 +18,47 @@ import model.interfaces.TipoReceita;
 import model.lancamentos.Despesa;
 import model.lancamentos.Receita;
 
+/**
+ * Classe: essa classe refere-se a construção do extrato com base no estado do
+ * objeto Pessoa
+ */
 public class Extrato {
 
     private Pessoa titular;
-    private String arquivoCSV;
+    private String arquivoLancamentos;
     private File arquivo;
 
+    /**
+     * Construtor: inicializa a variável titular do tipo Pessoa a fim de obter o
+     * estado de seus lançamentos
+     *
+     * @param titular do tipo Pessoa
+     */
     public Extrato(Pessoa titular) {
         this.titular = titular;
-        arquivoCSV = "lancamentos.csv";
+        arquivoLancamentos = "lancamentos.csv";
         try {
-            arquivo = new File(arquivoCSV);
+            arquivo = new File(arquivoLancamentos);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Erro ao criar arquivo CSV: " + e.getMessage());
         }
     }
 
+    /**
+     * Getter: capta o arquivo
+     *
+     * @return arquivo do tipo File
+     */
     public File getArquivo() {
         return arquivo;
     }
-    
+
+    /**
+     * Método que apaga o arquivo caso ele exista e não esteja aberto na área de
+     * trabalho
+     */
     public void apagarArquivo() {
         if (this.arquivo.delete()) {
-            this.arquivo = null;
             JOptionPane.showMessageDialog(null, "Arquivo apagado com sucesso!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Falha ao apagar o arquivo CSV!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
@@ -48,10 +66,14 @@ public class Extrato {
 
     }
 
+    /**
+     * Método que carrega os dados do arquivo caso ele exista, ou seja, deve-se
+     * primerio executar o comando de salvar dados
+     */
     public void carregarDados() {
 
         String separadorCSV = ",";
-        try(BufferedReader br = new BufferedReader(new FileReader(arquivoCSV))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(arquivoLancamentos))) {
 
             String linha;
             br.readLine(); // Ignora a primeira linha (cabeçalho)
@@ -91,42 +113,43 @@ public class Extrato {
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Erro ao carregar dados do arquivo CSV: " + ex.getMessage());
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(null, "Existem lançamentos na plataforma com IDs duplicados em relação aos IDs contidos no arquivo. Recomenda-se remover os lançamentos duplicados na plataforma ou alterar os IDs no documento!");
+            JOptionPane.showMessageDialog(null, "Foram feitos lançamentos na plataforma com IDs já contidos no arquivo. \nRecomenda-se remover os lançamentos duplicados na plataforma ou alterar os IDs no documento!");
         }
     }
 
+    /**
+     * Método que salva os dados de despesas e receitas inseridas pelo usuário,
+     * caso haja uma inserção
+     */
     public void salvarDados() {
         String arquivoCSV = "lancamentos.csv";
         String separadorCSV = ",";
 
-        try (PrintWriter writer = new PrintWriter(new FileWriter(arquivoCSV))) {
+        try (PrintWriter escrever = new PrintWriter(new FileWriter(arquivoCSV))) {
             // Escreve o cabeçalho
-            writer.println("\"Valor\",\"Data\",\"Categoria\",\"Tipo\",\"ID\"");
+            escrever.println("\"Valor\",\"Data\",\"Categoria\",\"Tipo\",\"ID\"");
 
-            List<Integer> idsDespesas = new ArrayList<>(titular.getDespesasMap().keySet());
-            Collections.sort(idsDespesas);
-            List<Integer> idsReceitas = new ArrayList<>(titular.getReceitasMap().keySet());
-            Collections.sort(idsReceitas);
-
+            List<Integer> idsLancamentos = new ArrayList<>(titular.getHistorico().keySet());
             // Escreve as receitas
-            for (Integer id : idsReceitas) {
-                Receita rc = titular.getReceitasMap().get(id);
-                writer.println(String.format("%s,%s,%s,Receita,%d",
-                        rc.getValor(),
-                        rc.getDataLancamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                        rc.getTipoReceita(),
-                        id));
+            for (Integer id : idsLancamentos) {
+
+                if (titular.getReceitasMap().containsKey(id)) {
+                    Receita rc = titular.getReceitasMap().get(id);
+                    escrever.println(String.format("%s,%s,%s,Receita,%d",
+                            rc.getValor(),
+                            rc.getDataLancamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                            rc.getTipoReceita(),
+                            id));
+                } else {
+                    Despesa dc = titular.getDespesasMap().get(id);
+                    escrever.println(String.format("%s,%s,%s,Despesa,%d",
+                            dc.getValor(),
+                            dc.getDataLancamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                            dc.getTipoDespesa(),
+                            id));
+                }
             }
 
-            // Escreve as despesas
-            for (Integer id : idsDespesas) {
-                Despesa dc = titular.getDespesasMap().get(id);
-                writer.println(String.format("%s,%s,%s,Despesa,%d",
-                        dc.getValor(),
-                        dc.getDataLancamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                        dc.getTipoDespesa(),
-                        id));
-            }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Erro ao salvar dados no arquivo CSV");
         }
