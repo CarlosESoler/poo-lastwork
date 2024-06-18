@@ -4,10 +4,8 @@
  */
 package model;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Map;
-import model.interfaces.TipoDespesa;
 import static model.interfaces.TipoDespesa.RESIDENCIA;
 import static model.interfaces.TipoDespesa.SAUDE;
 import static model.interfaces.TipoReceita.SALARIO;
@@ -267,6 +265,5 @@ public class PessoaTest {
 
         assertNull(fulano.getDespesasMap().get(1));
     }
-    
     
 }
