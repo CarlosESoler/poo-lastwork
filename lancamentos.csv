@@ -1,0 +1,5 @@
+"Valor","Data","Categoria","Tipo","ID"
+1000,17/06/2024,SALARIO,Receita,1
+200,17/06/2025,FERIAS,Receita,2
+100,17/06/2024,ALIMENTACAO,Despesa,1
+50,17/06/2025,TRANSPORTE,Despesa,2

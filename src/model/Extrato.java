@@ -40,6 +40,7 @@ public class Extrato {
     
     public void apagarArquivo() {
         if (this.arquivo.delete()) {
+            this.arquivo = null;
             JOptionPane.showMessageDialog(null, "Arquivo apagado com sucesso!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Falha ao apagar o arquivo CSV!", "Aviso", JOptionPane.INFORMATION_MESSAGE);

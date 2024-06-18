@@ -104,6 +104,10 @@ public class ContaBancaria {
         }
     }
 
+    public BigDecimal getSaldo() {
+        return saldo;
+    }
+
     //Mostra o valor do saldo até o momento
     public BigDecimal consultaSaldoAtual() {
         BigDecimal saldoAtual = BigDecimal.ZERO;
